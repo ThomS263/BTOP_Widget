@@ -11,15 +11,15 @@ Rectangle {
     function fontSize(base) { return Math.round(base * root.fontScale / 100) }
     property color accentColor: root.colorScheme === 1 ? "#a6e3a1" : root.colorScheme === 2 ? "#f9e2af" : "#89b4fa"
 
-    Layout.minimumWidth: 540
-    Layout.preferredWidth: 560
-    Layout.minimumHeight: 400
-    Layout.preferredHeight: 410
+    Layout.minimumWidth: 380
+    Layout.preferredWidth: 460
+    Layout.minimumHeight: 380
+    Layout.preferredHeight: 400
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 14
-        spacing: 9
+        anchors.margins: 10
+        spacing: 6
 
         RowLayout {
             Layout.fillWidth: true
@@ -29,7 +29,7 @@ Rectangle {
 
         GridLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: 224
+            Layout.preferredHeight: 204
             columns: root.layoutMode === 1 ? 1 : 2
             rowSpacing: root.panelSpacing
             columnSpacing: root.panelSpacing
@@ -39,7 +39,7 @@ Rectangle {
                 Layout.row: root.panelRow("cpu")
                 Layout.column: root.panelColumn("cpu")
                 Layout.fillWidth: true
-                Layout.preferredHeight: 108
+                Layout.preferredHeight: 98
                 color: dashboard.panelColor
                 border.color: dashboard.panelBorderColor
                 border.width: 1
@@ -81,7 +81,7 @@ Rectangle {
                 Layout.row: root.panelRow("memory")
                 Layout.column: root.panelColumn("memory")
                 Layout.fillWidth: true
-                Layout.preferredHeight: 108
+                Layout.preferredHeight: 98
                 color: dashboard.panelColor
                 border.color: dashboard.panelBorderColor
                 border.width: 1
@@ -107,7 +107,7 @@ Rectangle {
                 Layout.row: root.panelRow("network")
                 Layout.column: root.panelColumn("network")
                 Layout.columnSpan: root.layoutMode === 2 ? 2 : 1
-                Layout.fillWidth: true; Layout.preferredHeight: 108
+                Layout.fillWidth: true; Layout.preferredHeight: 98
                 color: dashboard.panelColor; border.color: dashboard.panelBorderColor; border.width: 1
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
@@ -131,7 +131,7 @@ Rectangle {
                 visible: root.showDisk
                 Layout.row: root.panelRow("disk")
                 Layout.column: root.panelColumn("disk")
-                Layout.fillWidth: true; Layout.preferredHeight: 108
+                Layout.fillWidth: true; Layout.preferredHeight: 98
                 color: dashboard.panelColor; border.color: dashboard.panelBorderColor; border.width: 1
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
@@ -146,7 +146,7 @@ Rectangle {
                         Layout.fillWidth: true; height: 9; color: "#60405466"
                         Rectangle { width: parent.width * root.diskUsage / 100; height: parent.height; color: "#f9e2af" }
                     }
-                    Text { text: root.diskUsedGiB.toFixed(0) + " / " + root.diskTotalGiB.toFixed(0) + " GiB" + (root.showDisks ? "   " + root.diskSummary() : ""); color: "#cdd6f4"; font.family: "monospace"; elide: Text.ElideRight }
+                    Text { Layout.fillWidth: true; text: root.diskUsedGiB.toFixed(0) + " / " + root.diskTotalGiB.toFixed(0) + " GiB"; color: "#cdd6f4"; font.family: "monospace"; elide: Text.ElideRight }
                     Text { text: "load " + root.loadLabel + "   proc " + root.processLabel; color: "#f9e2af"; font.family: "monospace" }
                 }
             }
@@ -155,7 +155,7 @@ Rectangle {
         Rectangle {
             visible: root.showHardware
             Layout.fillWidth: true
-            Layout.preferredHeight: 70
+            Layout.preferredHeight: 64
             color: dashboard.panelColor
             border.color: dashboard.panelBorderColor
             border.width: 1
@@ -179,7 +179,7 @@ Rectangle {
         Rectangle {
             visible: root.showPrograms
             Layout.fillWidth: true
-            Layout.preferredHeight: 112
+            Layout.preferredHeight: 100
             color: dashboard.panelColor
             border.color: dashboard.panelBorderColor
             border.width: 1
@@ -191,11 +191,11 @@ Rectangle {
                     Layout.fillWidth: true
                     Text { text: "PROGRAMS"; color: "#f38ba8"; font.family: "monospace"; font.bold: true }
                     Item { Layout.fillWidth: true }
-                    Controls.TextField { placeholderText: "filter"; text: root.processFilter; onTextChanged: root.processFilter = text; Layout.preferredWidth: 90; Layout.preferredHeight: 24 }
-                    Text { text: "PID          COMMAND             CPU      MEM"; color: "#a7b3c2"; font.family: "monospace"; font.pixelSize: dashboard.fontSize(10) }
+                    Controls.TextField { placeholderText: "filter"; text: root.processFilter; onTextChanged: root.processFilter = text; Layout.preferredWidth: 72; Layout.preferredHeight: 22 }
                 }
                 Column {
                     Layout.fillWidth: true
+                    width: parent.width
                     Repeater {
                         model: root.processes
                         delegate: RowLayout {
@@ -208,10 +208,10 @@ Rectangle {
                                 Controls.MenuItem { text: "Terminate process"; onTriggered: root.terminateProcess(modelData.pid) }
                             }
                             MouseArea { anchors.fill: parent; acceptedButtons: Qt.RightButton; onClicked: processMenu.popup() }
-                            Text { text: modelData.pid; color: "#a7b3c2"; font.family: "monospace"; width: 55 }
-                            Text { text: modelData.name; color: "#cdd6f4"; font.family: "monospace"; Layout.fillWidth: true; elide: Text.ElideRight }
-                            Text { text: modelData.cpu + "%"; color: "#89b4fa"; font.family: "monospace"; width: 55; horizontalAlignment: Text.AlignRight }
-                            Text { text: modelData.memory + "%"; color: "#a6e3a1"; font.family: "monospace"; width: 55; horizontalAlignment: Text.AlignRight }
+                            Text { text: modelData.pid; color: "#a7b3c2"; font.family: "monospace"; width: 44 }
+                            Text { text: modelData.name; color: "#cdd6f4"; font.family: "monospace"; Layout.fillWidth: true; Layout.minimumWidth: 0; elide: Text.ElideRight }
+                            Text { text: modelData.cpu + "%"; color: "#89b4fa"; font.family: "monospace"; width: 42; horizontalAlignment: Text.AlignRight }
+                            Text { text: modelData.memory + "%"; color: "#a6e3a1"; font.family: "monospace"; width: 42; horizontalAlignment: Text.AlignRight }
                         }
                     }
                 }
