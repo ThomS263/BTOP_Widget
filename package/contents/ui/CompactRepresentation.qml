@@ -5,9 +5,9 @@ import org.kde.plasma.plasmoid
 
 Rectangle {
     id: dashboard
-    color: "#111820"
+    color: "transparent"
     radius: 4
-    border.color: "#405466"
+    border.color: "#70405466"
     border.width: 1
 
     Layout.minimumWidth: 430
@@ -39,7 +39,7 @@ Rectangle {
             Text { text: "● LIVE"; color: "#a6e3a1"; font.family: "monospace"; font.bold: true }
         }
 
-        Rectangle { Layout.fillWidth: true; height: 1; color: "#405466" }
+        Rectangle { Layout.fillWidth: true; height: 1; color: "#70405466" }
 
         RowLayout {
             Layout.fillWidth: true
@@ -80,7 +80,7 @@ Rectangle {
             }
         }
 
-        Rectangle { Layout.fillWidth: true; height: 1; color: "#283744" }
+        Rectangle { Layout.fillWidth: true; height: 1; color: "#60405466" }
 
         RowLayout {
             Layout.fillWidth: true

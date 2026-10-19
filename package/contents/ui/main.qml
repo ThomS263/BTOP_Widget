@@ -24,6 +24,7 @@ PlasmoidItem {
     property var cpuHistory: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     Plasmoid.status: PlasmaCore.Types.ActiveStatus
+    Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
     preferredRepresentation: compactRepresentation
     compactRepresentation: CompactRepresentation {}
     fullRepresentation: FullRepresentation {}
