@@ -52,6 +52,7 @@ defaults() {
     set_value showPrograms true
     set_value showHardware true
     set_value showDisks true
+    set_value fanSpeedTarget 0
 }
 
 restart_plasma() {
@@ -66,12 +67,16 @@ capture() {
     local was_desktop
     was_desktop="$(qdbus6 org.kde.KWin /KWin org.kde.KWin.showingDesktop 2>/dev/null || printf 'false')"
     if [[ "$was_desktop" != "true" ]]; then
-        qdbus6 org.kde.kglobalaccel /component/kwin \
-            org.kde.kglobalaccel.Component.invokeShortcut 'Show Desktop' >/dev/null 2>&1 || true
+        for _ in {1..3}; do
+            qdbus6 org.kde.kglobalaccel /component/kwin \
+                org.kde.kglobalaccel.Component.invokeShortcut 'Show Desktop' >/dev/null 2>&1 || true
+            sleep 1
+            [[ "$(qdbus6 org.kde.KWin /KWin org.kde.KWin.showingDesktop 2>/dev/null || printf 'false')" == "true" ]] && break
+        done
     fi
     sleep 1
     spectacle -b -n -o "${SCREENSHOT_DIR}/${name}.png" >/dev/null
-    if [[ "$was_desktop" != "true" ]]; then
+    if [[ "$was_desktop" != "true" && "$(qdbus6 org.kde.KWin /KWin org.kde.KWin.showingDesktop 2>/dev/null || printf 'false')" == "true" ]]; then
         qdbus6 org.kde.kglobalaccel /component/kwin \
             org.kde.kglobalaccel.Component.invokeShortcut 'Show Desktop' >/dev/null 2>&1 || true
     fi

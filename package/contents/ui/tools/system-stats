@@ -79,15 +79,23 @@ if command -v sensors >/dev/null 2>&1; then
     gpu_power="$(printf '%s\n' "$sensor_data" | awk '/^PPT:/ { gsub("W", "", $2); print $2; exit }')"
     cpu_temp="$(printf '%s\n' "$sensor_data" | awk '/^Tctl:/ { sub(/^\+/, "", $2); sub(/°C/, "", $2); print $2; exit }')"
     nvme_temp="$(printf '%s\n' "$sensor_data" | awk '/^Composite:/ { sub(/^\+/, "", $2); sub(/°C/, "", $2); print $2; exit }')"
-    fan_rpm="$(printf '%s\n' "$sensor_data" | awk '/^fan[0-9]+:/ { sum += $2; count++ } END { if (count) printf "%.0f", sum / count }')"
+    fan1_rpm="$(printf '%s\n' "$sensor_data" | awk '/^[[:space:]]*fan1:/ { print $2; exit }')"
+    fan2_rpm="$(printf '%s\n' "$sensor_data" | awk '/^[[:space:]]*fan4:/ { print $2; exit }')"
 fi
+platform_profile="$(cat /sys/firmware/acpi/platform_profile 2>/dev/null || echo unknown)"
+for fan_input in /sys/class/hwmon/hwmon*/fan1_input; do
+    [ -r "$fan_input" ] && fan1_rpm="$(cat "$fan_input" 2>/dev/null)" && break
+done
+for fan_input in /sys/class/hwmon/hwmon*/fan4_input; do
+    [ -r "$fan_input" ] && fan2_rpm="$(cat "$fan_input" 2>/dev/null)" && break
+done
 for gpu in /sys/class/drm/card*/device; do
     [ -r "$gpu/gpu_busy_percent" ] && gpu_usage="$(cat "$gpu/gpu_busy_percent")"
     [ -r "$gpu/mem_info_vram_used" ] && vram_used="$(cat "$gpu/mem_info_vram_used")"
     [ -r "$gpu/mem_info_vram_total" ] && vram_total="$(cat "$gpu/mem_info_vram_total")"
 done
 printf 'GPU;%s;%s;%s;%s;%s\n' "${gpu_temp:-NA}" "${gpu_power:-NA}" "${gpu_usage:-NA}" "${vram_used:-NA}" "${vram_total:-NA}"
-printf 'SENSORS;%s;%s;%s\n' "${cpu_temp:-NA}" "${nvme_temp:-NA}" "${fan_rpm:-NA}"
+printf 'SENSORS;%s;%s;%s;%s;%s\n' "${cpu_temp:-NA}" "${nvme_temp:-NA}" "${fan1_rpm:-NA}" "${fan2_rpm:-NA}" "$platform_profile"
 
 for iface_path in /sys/class/net/*; do
     iface="${iface_path##*/}"

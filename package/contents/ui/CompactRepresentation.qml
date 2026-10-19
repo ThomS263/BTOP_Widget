@@ -160,8 +160,8 @@ Rectangle {
             visible: root.showHardware
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignTop
-            Layout.minimumHeight: 78
-            Layout.preferredHeight: 78
+            Layout.minimumHeight: 96
+            Layout.preferredHeight: 96
             color: dashboard.panelColor
             border.color: dashboard.panelBorderColor
             border.width: 1
@@ -176,9 +176,10 @@ Rectangle {
                 }
                 Text {
                     Layout.fillWidth: true
-                    text: "GPU " + (root.gpuTemperature >= 0 ? root.gpuTemperature.toFixed(0) + "°C" : "--") + "  " + (root.gpuUsage >= 0 ? root.gpuUsage + "%" : "--") + "  " + (root.gpuPowerWatts >= 0 ? root.gpuPowerWatts.toFixed(1) + "W" : "--") + "    CPU " + (root.cpuTemperature >= 0 ? root.cpuTemperature.toFixed(0) + "°C" : "--") + "    NVMe " + (root.nvmeTemperature >= 0 ? root.nvmeTemperature.toFixed(0) + "°C" : "--") + "    FAN " + (root.fanRpm >= 0 ? root.fanRpm.toFixed(0) + " RPM" : "--") + (root.fanSpeedTarget > 0 ? "  T" + root.fanSpeedTarget + "%" : "  auto")
+                    text: "GPU " + (root.gpuTemperature >= 0 ? root.gpuTemperature.toFixed(0) + "°C" : "--") + "  " + (root.gpuUsage >= 0 ? root.gpuUsage + "%" : "--") + "  " + (root.gpuPowerWatts >= 0 ? root.gpuPowerWatts.toFixed(1) + "W" : "--") + "    CPU " + (root.cpuTemperature >= 0 ? root.cpuTemperature.toFixed(0) + "°C" : "--") + "    NVMe " + (root.nvmeTemperature >= 0 ? root.nvmeTemperature.toFixed(0) + "°C" : "--")
                     color: "#cdd6f4"; font.family: "monospace"; elide: Text.ElideRight
                 }
+                Text { text: root.fanLabel + "  profile " + root.platformProfile + (root.fanSpeedTarget > 0 ? "  T" + root.fanSpeedTarget + "%" : "  auto"); color: "#a7b3c2"; font.family: "monospace"; elide: Text.ElideRight }
                 Text { text: "VRAM " + (root.vramUsedGiB >= 0 ? root.vramUsedGiB.toFixed(1) + " / " + root.vramTotalGiB.toFixed(1) + " GiB" : "--") + "    kernel " + root.kernelLabel; color: "#a7b3c2"; font.family: "monospace"; elide: Text.ElideRight }
             }
         }

@@ -41,7 +41,17 @@ PlasmoidItem {
     property real cpuTemperature: -1
     property real nvmeTemperature: -1
     property real fanRpm: -1
+    property real fanRpm2: -1
+    property string platformProfile: "unknown"
     property string kernelLabel: "--"
+    readonly property string fanLabel: {
+        var fans = []
+        if (fanRpm > 0)
+            fans.push("FAN1 " + fanRpm.toFixed(0) + " RPM")
+        if (fanRpm2 > 0)
+            fans.push("FAN2 " + fanRpm2.toFixed(0) + " RPM")
+        return fans.length > 0 ? fans.join("  ") : "FAN --"
+    }
     property var networkInterfaces: []
     property var disks: []
     property string processFilter: ""
@@ -167,6 +177,8 @@ PlasmoidItem {
                 cpuTemperature = Number(parts[1]) || -1
                 nvmeTemperature = Number(parts[2]) || -1
                 fanRpm = Number(parts[3]) || -1
+                fanRpm2 = Number(parts[4]) || -1
+                platformProfile = parts[5] || "unknown"
             } else if (parts[0] === "NET" && parts.length >= 6) {
                 parsedNetworks.push({ name: parts[1], rx: Number(parts[2]) || 0, tx: Number(parts[3]) || 0, speed: Number(parts[4]) || 0, state: parts[5] })
             } else if (parts[0] === "DISK" && parts.length >= 5) {
