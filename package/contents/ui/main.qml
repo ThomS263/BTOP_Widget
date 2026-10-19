@@ -29,6 +29,7 @@ PlasmoidItem {
     property var cpuHistory: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     property var rxHistory: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     property var txHistory: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    property var processes: []
 
     Plasmoid.status: PlasmaCore.Types.ActiveStatus
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
@@ -82,6 +83,12 @@ PlasmoidItem {
         diskUsedGiB = (disk[0] || 0) / 1048576
         diskTotalGiB = (disk[1] || 0) / 1048576
         diskUsage = diskTotalGiB > 0 ? diskUsedGiB / diskTotalGiB * 100 : 0
+        const processRows = []
+        for (let i = 6; i < lines.length; i++) {
+            const fields = lines[i].trim().split(/\s+/)
+            if (fields.length >= 4) processRows.push({ pid: fields[0], name: fields[1], cpu: fields[2], memory: fields[3] })
+        }
+        processes = processRows
         cpuLabel = Math.round(cpuUsage) + "%"
         memoryLabel = Math.round(memoryUsage) + "%"
         loadLabel = loadAverage.toFixed(2)
@@ -89,7 +96,7 @@ PlasmoidItem {
     }
 
     function refresh() {
-        stats.run("awk '/^cpu / { printf \"%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\\n\", $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12 } /^MemTotal:/ { total=$2 } /^MemAvailable:/ { available=$2 } /^[[:space:]]*[[:alnum:]_.-]+:/ && NF >= 10 { iface=$1; gsub(\":\", \"\", iface); if (iface != \"lo\") { rx += $2; tx += $10 } } END { printf \"MemTotal %s;MemAvailable %s;SwapTotal %s;SwapFree %s\\n%s;%s\\n\", total, available, swap_total, swap_free, rx, tx } /^SwapTotal:/ { swap_total=$2 } /^SwapFree:/ { swap_free=$2 }' /proc/stat /proc/meminfo /proc/net/dev; awk '{print $1\";\"$4}' /proc/loadavg; cat /proc/uptime | cut -d' ' -f1; df -P -k / | awk 'NR==2 {print $3\";\"$2}'")
+        stats.run("awk '/^cpu / { printf \"%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\\n\", $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12 } /^MemTotal:/ { total=$2 } /^MemAvailable:/ { available=$2 } /^[[:space:]]*[[:alnum:]_.-]+:/ && NF >= 10 { iface=$1; gsub(\":\", \"\", iface); if (iface != \"lo\") { rx += $2; tx += $10 } } END { printf \"MemTotal %s;MemAvailable %s;SwapTotal %s;SwapFree %s\\n%s;%s\\n\", total, available, swap_total, swap_free, rx, tx } /^SwapTotal:/ { swap_total=$2 } /^SwapFree:/ { swap_free=$2 }' /proc/stat /proc/meminfo /proc/net/dev; awk '{print $1\";\"$4}' /proc/loadavg; cat /proc/uptime | cut -d' ' -f1; df -P -k / | awk 'NR==2 {print $3\";\"$2}'; ps -eo pid=,comm=,%cpu=,%mem= --sort=-%cpu | head -n 5")
     }
 
     function formatRate(bytesPerSecond) {
