@@ -21,8 +21,6 @@ Rectangle {
             Text { visible: root.batteryLevel >= 0; text: "BAT " + root.batteryLevel + "%  " + root.batteryPowerWatts.toFixed(1) + "W  " + root.batteryVoltage.toFixed(1) + "V"; color: root.batteryLevel < 20 ? "#f38ba8" : "#a6e3a1"; font.family: "monospace"; font.bold: true }
         }
 
-        Rectangle { Layout.fillWidth: true; height: 1; color: "#80506a7d" }
-
         GridLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 224
