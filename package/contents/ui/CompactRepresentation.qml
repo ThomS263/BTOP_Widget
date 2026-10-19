@@ -30,8 +30,8 @@ Rectangle {
         GridLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignTop
-            Layout.minimumHeight: root.layoutMode === 1 ? 416 : 212
-            Layout.preferredHeight: root.layoutMode === 1 ? 416 : 212
+            Layout.minimumHeight: root.layoutMode === 1 ? 464 : 232
+            Layout.preferredHeight: root.layoutMode === 1 ? 464 : 232
             columns: root.layoutMode === 1 ? 1 : 2
             rowSpacing: root.panelSpacing
             columnSpacing: root.panelSpacing
@@ -111,7 +111,7 @@ Rectangle {
                 Layout.row: root.panelRow("network")
                 Layout.column: root.panelColumn("network")
                 Layout.columnSpan: root.layoutMode === 2 ? 2 : 1
-                Layout.fillWidth: true; Layout.preferredHeight: 98
+                Layout.fillWidth: true; Layout.preferredHeight: 112
                 color: dashboard.panelColor; border.color: dashboard.panelBorderColor; border.width: 1; clip: true
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
@@ -128,6 +128,7 @@ Rectangle {
                         Item { Layout.fillWidth: true }
                         Text { text: "↑ " + root.formatRate(root.txRate); color: "#f5c2e7"; font.family: "monospace" }
                     }
+                    Text { Layout.fillWidth: true; text: root.interfaceSummary(); color: "#a7b3c2"; font.family: "monospace"; font.pixelSize: dashboard.fontSize(10); elide: Text.ElideRight }
                 }
             }
 

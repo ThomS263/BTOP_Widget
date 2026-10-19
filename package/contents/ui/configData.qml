@@ -16,7 +16,7 @@ Kirigami.FormLayout {
 
     Controls.Slider {
         id: fanSpeedTarget
-        Kirigami.FormData.label: i18n("Fan speed target:")
+        Kirigami.FormData.label: i18n("Fan target hint:")
         from: 0
         to: 100
         stepSize: 5
@@ -29,14 +29,14 @@ Kirigami.FormLayout {
         Kirigami.FormData.label: ""
         text: fanSpeedTarget.value === 0
               ? i18n("Automatic / monitoring only")
-              : i18n("Experimental target: %1% (hardware control is unavailable on this system)", fanSpeedTarget.value)
+              : i18n("Display hint: %1% (no hardware control is performed)", fanSpeedTarget.value)
         color: Kirigami.Theme.disabledTextColor
         wrapMode: Text.WordWrap
     }
 
     Controls.Label {
         Kirigami.FormData.label: ""
-        text: i18n("Leave the interface empty to combine all active network interfaces.")
+        text: i18n("Leave the interface empty to combine all active interfaces. The fan value is read-only unless your system exposes a supported controller.")
         color: Kirigami.Theme.disabledTextColor
         wrapMode: Text.WordWrap
     }

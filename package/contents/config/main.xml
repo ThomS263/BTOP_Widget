@@ -20,7 +20,7 @@
     <entry name="networkInterface" type="String"><default></default></entry>
     <entry name="processCount" type="Int"><default>5</default></entry>
     <entry name="processSort" type="Int"><default>0</default></entry>
-      <entry name="fanSpeedTarget" type="Int"><default>0</default></entry>
+    <entry name="fanSpeedTarget" type="Int"><default>0</default></entry>
     <entry name="panelOpacity" type="Int"><default>19</default></entry>
     <entry name="fontScale" type="Int"><default>100</default></entry>
     <entry name="panelSpacing" type="Int"><default>8</default></entry>

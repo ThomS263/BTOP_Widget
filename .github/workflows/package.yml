@@ -1,0 +1,29 @@
+name: Build Plasma package
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install packaging tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake extra-cmake-modules
+      - name: Build plasmoid archive
+        run: |
+          cmake -B build-store -S . -DPACKAGE_PLASMOID=ON
+          cmake --build build-store
+      - name: Validate archive
+        run: |
+          test -s btop-plasma-widget-v*.plasmoid
+          unzip -t btop-plasma-widget-v*.plasmoid
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: btop-plasma-widget
+          path: '*.plasmoid'
