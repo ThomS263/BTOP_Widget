@@ -31,6 +31,20 @@ PlasmoidItem {
     property string uptimeLabel: "--"
     property string processLabel: "--"
     property string networkLabel: "--"
+    property string connectionStatus: "--"
+    property real pingMs: -1
+    property real gpuTemperature: -1
+    property real gpuPowerWatts: -1
+    property real gpuUsage: -1
+    property real vramUsedGiB: -1
+    property real vramTotalGiB: -1
+    property real cpuTemperature: -1
+    property real nvmeTemperature: -1
+    property real fanRpm: -1
+    property string kernelLabel: "--"
+    property var networkInterfaces: []
+    property var disks: []
+    property string processFilter: ""
     property var previousCpu: null
     property var cpuHistory: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     property var rxHistory: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -41,7 +55,7 @@ PlasmoidItem {
     readonly property bool showMemory: Plasmoid.configuration.showMemory
     readonly property bool showNetwork: Plasmoid.configuration.showNetwork
     readonly property bool showDisk: Plasmoid.configuration.showDisk
-    readonly property bool showPrograms: Plasmoid.configuration.showPrograms
+    readonly property bool showPrograms: Plasmoid.configuration.showPrograms && profile !== 1
     readonly property int layoutMode: Plasmoid.configuration.layoutMode
     readonly property int chartStyle: Plasmoid.configuration.chartStyle
     readonly property int panelOrder: Plasmoid.configuration.panelOrder
@@ -52,6 +66,10 @@ PlasmoidItem {
     readonly property int panelOpacity: Plasmoid.configuration.panelOpacity
     readonly property int fontScale: Plasmoid.configuration.fontScale
     readonly property int panelSpacing: Plasmoid.configuration.panelSpacing
+    readonly property int profile: Plasmoid.configuration.profile
+    readonly property int colorScheme: Plasmoid.configuration.colorScheme
+    readonly property bool showHardware: Plasmoid.configuration.showHardware && profile !== 1
+    readonly property bool showDisks: Plasmoid.configuration.showDisks || profile === 2
 
     Plasmoid.status: PlasmaCore.Types.ActiveStatus
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
@@ -133,9 +151,34 @@ PlasmoidItem {
         batteryPowerWatts = (Number(battery[1]) || 0) / 1000000
         batteryVoltage = (Number(battery[2]) || 0) / 1000000
         batteryStatus = battery[3] || ""
-        if (lines.length > 7) {
+        const parsedNetworks = []
+        const parsedDisks = []
+        for (let i = 7; i < lines.length; i++) {
+            const parts = lines[i].trim().split(";")
+            if (parts[0] === "GPU") {
+                gpuTemperature = Number(parts[1]) || -1
+                gpuPowerWatts = Number(parts[2]) || -1
+                gpuUsage = Number(parts[3]) || -1
+                vramUsedGiB = Number(parts[4]) > 0 ? Number(parts[4]) / 1073741824 : -1
+                vramTotalGiB = Number(parts[5]) > 0 ? Number(parts[5]) / 1073741824 : -1
+            } else if (parts[0] === "SENSORS") {
+                cpuTemperature = Number(parts[1]) || -1
+                nvmeTemperature = Number(parts[2]) || -1
+                fanRpm = Number(parts[3]) || -1
+            } else if (parts[0] === "NET" && parts.length >= 6) {
+                parsedNetworks.push({ name: parts[1], rx: Number(parts[2]) || 0, tx: Number(parts[3]) || 0, speed: Number(parts[4]) || 0, state: parts[5] })
+            } else if (parts[0] === "DISK" && parts.length >= 5) {
+                parsedDisks.push({ mount: parts[1], used: Number(parts[2]) / 1048576, total: Number(parts[3]) / 1048576, percent: Number(String(parts[4]).replace("%", "")) || 0 })
+            } else if (parts[0] === "KERNEL") {
+                kernelLabel = parts[1] || "--"
+            }
+        }
+        networkInterfaces = parsedNetworks
+        disks = parsedDisks
+        const processMarker = lines.indexOf("PROC")
+        if (processMarker >= 0 && processMarker + 1 < lines.length) {
             const processRows = []
-            for (let i = 7; i < lines.length; i++) {
+            for (let i = processMarker + 1; i < lines.length; i++) {
                 const fields = lines[i].trim().split(/\s+/)
                 if (fields.length >= 4) processRows.push({ pid: fields[0], name: fields[1], cpu: fields[2], memory: fields[3] })
             }
@@ -168,6 +211,36 @@ PlasmoidItem {
         processes = processRows
     }
 
+    function matchesProcess(name) {
+        return processFilter.trim() === "" || name.toLowerCase().indexOf(processFilter.trim().toLowerCase()) >= 0
+    }
+
+    function diskSummary() {
+        return disks.slice(0, 3).map(function(disk) { return disk.mount + " " + Math.round(disk.percent) + "%" }).join("   ")
+    }
+
+    function interfaceSummary() {
+        return networkInterfaces.map(function(item) { return item.name + ":" + item.state }).join("  ")
+    }
+
+    function terminateProcess(pid) {
+        if (/^[0-9]+$/.test(String(pid))) processAction.run("kill -TERM " + pid)
+    }
+
+    function openSystemMonitor() {
+        processAction.run("plasma-systemmonitor")
+    }
+
+    function refreshPing() {
+        pingRunner.run("ping -c 1 -W 1 1.1.1.1")
+    }
+
+    function parsePing(output) {
+        const match = output.match(/time[=<]([0-9.]+)/)
+        pingMs = match ? Number(match[1]) : -1
+        connectionStatus = pingMs >= 0 ? "online" : "offline"
+    }
+
     function formatRate(bytesPerSecond) {
         if (bytesPerSecond < 1024) return Math.round(bytesPerSecond) + " B/s"
         if (bytesPerSecond < 1048576) return (bytesPerSecond / 1024).toFixed(1) + " KiB/s"
@@ -196,6 +269,15 @@ PlasmoidItem {
         }
     }
 
+    CommandRunner {
+        id: pingRunner
+        onFinished: function(command, exitCode, stdout, stderr) {
+            root.parsePing(exitCode === 0 ? stdout : "")
+        }
+    }
+
+    CommandRunner { id: processAction }
+
     Timer {
         interval: Math.max(250, Plasmoid.configuration.updateInterval)
         repeat: true
@@ -210,6 +292,14 @@ PlasmoidItem {
         running: true
         triggeredOnStart: true
         onTriggered: root.refreshProcesses()
+    }
+
+    Timer {
+        interval: 10000
+        repeat: true
+        running: true
+        triggeredOnStart: true
+        onTriggered: root.refreshPing()
     }
 
 }

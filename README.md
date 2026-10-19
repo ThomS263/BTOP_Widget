@@ -16,8 +16,8 @@ The widget is a passive dashboard rather than a launcher or button. It reads loc
 
 ## Configuration
 
-The configuration dialog controls panel visibility, panel layout/order, update interval, graph style and history length, network interface, process count/sorting, panel opacity, font scale, and spacing.
+The configuration dialog controls panel visibility, panel layout/order, update interval, graph style and history length, network interface, process count/sorting, panel opacity, font scale, spacing, profiles, and color schemes. Hardware sensors, GPU/VRAM, temperatures, fans, connection status, multiple interfaces, and mounted filesystems are detected when available.
 
 ## KDE Store package
 
-The `btop-plasma-widget-v1.2.0.plasmoid` archive is generated from the `package/` directory and can be uploaded to the KDE Store under **Plasma Widgets**.
+The `btop-plasma-widget-v1.3.0.plasmoid` archive is generated from the `package/` directory and can be uploaded to the KDE Store under **Plasma Widgets**.

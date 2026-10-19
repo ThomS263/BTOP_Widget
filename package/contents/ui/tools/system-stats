@@ -68,6 +68,41 @@ for battery in /sys/class/power_supply/BAT*; do
 done
 printf '%s\n' "$battery_line"
 
+gpu_temp="NA"
+gpu_power="NA"
+gpu_usage="NA"
+vram_used="NA"
+vram_total="NA"
+if command -v sensors >/dev/null 2>&1; then
+    sensor_data="$(sensors 2>/dev/null)"
+    gpu_temp="$(printf '%s\n' "$sensor_data" | awk '/^edge:/ { sub(/^\+/, "", $2); sub(/°C/, "", $2); print $2; exit }')"
+    gpu_power="$(printf '%s\n' "$sensor_data" | awk '/^PPT:/ { gsub("W", "", $2); print $2; exit }')"
+    cpu_temp="$(printf '%s\n' "$sensor_data" | awk '/^Tctl:/ { sub(/^\+/, "", $2); sub(/°C/, "", $2); print $2; exit }')"
+    nvme_temp="$(printf '%s\n' "$sensor_data" | awk '/^Composite:/ { sub(/^\+/, "", $2); sub(/°C/, "", $2); print $2; exit }')"
+    fan_rpm="$(printf '%s\n' "$sensor_data" | awk '/^fan[0-9]+:/ { sum += $2; count++ } END { if (count) printf "%.0f", sum / count }')"
+fi
+for gpu in /sys/class/drm/card*/device; do
+    [ -r "$gpu/gpu_busy_percent" ] && gpu_usage="$(cat "$gpu/gpu_busy_percent")"
+    [ -r "$gpu/mem_info_vram_used" ] && vram_used="$(cat "$gpu/mem_info_vram_used")"
+    [ -r "$gpu/mem_info_vram_total" ] && vram_total="$(cat "$gpu/mem_info_vram_total")"
+done
+printf 'GPU;%s;%s;%s;%s;%s\n' "${gpu_temp:-NA}" "${gpu_power:-NA}" "${gpu_usage:-NA}" "${vram_used:-NA}" "${vram_total:-NA}"
+printf 'SENSORS;%s;%s;%s\n' "${cpu_temp:-NA}" "${nvme_temp:-NA}" "${fan_rpm:-NA}"
+
+for iface_path in /sys/class/net/*; do
+    iface="${iface_path##*/}"
+    [ "$iface" = lo ] && continue
+    rx_iface="$(awk -v name="$iface" '$1 ~ name ":" { print $2; exit }' /proc/net/dev)"
+    tx_iface="$(awk -v name="$iface" '$1 ~ name ":" { print $10; exit }' /proc/net/dev)"
+    speed_iface="$(cat "$iface_path/speed" 2>/dev/null || echo 0)"
+    state_iface="$(cat "$iface_path/operstate" 2>/dev/null || echo unknown)"
+    printf 'NET;%s;%s;%s;%s;%s\n' "$iface" "${rx_iface:-0}" "${tx_iface:-0}" "$speed_iface" "$state_iface"
+done
+
+df -P -k -x tmpfs -x devtmpfs 2>/dev/null | awk 'NR > 1 && $6 ~ /^\// && !seen[$6]++ { printf "DISK;%s;%s;%s;%s\n", $6, $3, $2, $5 }' | head -n 8
+printf 'KERNEL;%s\n' "$(uname -r)"
+printf 'PROC\n'
+
 if [ "$include_processes" -eq 1 ]; then
     case "$process_sort" in
         name) ps -eo pid=,comm=,%cpu=,%mem= --sort=comm | head -n "$process_count" ;;

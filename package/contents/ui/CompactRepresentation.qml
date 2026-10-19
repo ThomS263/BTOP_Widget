@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls as Controls
 
 Rectangle {
     id: dashboard
@@ -8,6 +9,7 @@ Rectangle {
     property color panelBorderColor: Qt.rgba(0.31, 0.42, 0.49, Math.min(0.45, root.panelOpacity / 160))
 
     function fontSize(base) { return Math.round(base * root.fontScale / 100) }
+    property color accentColor: root.colorScheme === 1 ? "#a6e3a1" : root.colorScheme === 2 ? "#f9e2af" : "#89b4fa"
 
     Layout.minimumWidth: 540
     Layout.preferredWidth: 560
@@ -43,7 +45,7 @@ Rectangle {
                 border.width: 1
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
-                    Text { text: "CPU"; color: "#89b4fa"; font.family: "monospace"; font.bold: true }
+                Text { text: "CPU"; color: dashboard.accentColor; font.family: "monospace"; font.bold: true }
                     RowLayout {
                         Layout.fillWidth: true
                         Text { text: root.cpuLabel; color: "#f5f7ff"; font.family: "monospace"; font.pixelSize: 18; font.bold: true }
@@ -55,7 +57,7 @@ Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         download: root.cpuHistory
-                        downloadColor: "#89b4fa"
+                        downloadColor: dashboard.accentColor
                     }
                     Row {
                         visible: root.chartStyle !== 0
@@ -66,7 +68,7 @@ Rectangle {
                                 width: root.chartStyle === 2 ? 6 : 10
                                 height: Math.max(3, 48 * modelData / 100)
                                 anchors.bottom: parent.bottom
-                                color: modelData > 85 ? "#f38ba8" : "#89b4fa"
+                                color: modelData > 85 ? "#f38ba8" : dashboard.accentColor
                             }
                         }
                     }
@@ -143,9 +145,33 @@ Rectangle {
                         Layout.fillWidth: true; height: 9; color: "#60405466"
                         Rectangle { width: parent.width * root.diskUsage / 100; height: parent.height; color: "#f9e2af" }
                     }
-                    Text { text: root.diskUsedGiB.toFixed(0) + " / " + root.diskTotalGiB.toFixed(0) + " GiB"; color: "#cdd6f4"; font.family: "monospace" }
+                    Text { text: root.diskUsedGiB.toFixed(0) + " / " + root.diskTotalGiB.toFixed(0) + " GiB" + (root.showDisks ? "   " + root.diskSummary() : ""); color: "#cdd6f4"; font.family: "monospace"; elide: Text.ElideRight }
                     Text { text: "load " + root.loadLabel + "   proc " + root.processLabel; color: "#f9e2af"; font.family: "monospace" }
                 }
+            }
+        }
+
+        Rectangle {
+            visible: root.showHardware
+            Layout.fillWidth: true
+            Layout.preferredHeight: 70
+            color: dashboard.panelColor
+            border.color: dashboard.panelBorderColor
+            border.width: 1
+            ColumnLayout {
+                anchors.fill: parent; anchors.margins: 10; spacing: 4
+                RowLayout {
+                    Layout.fillWidth: true
+                    Text { text: "HARDWARE"; color: dashboard.accentColor; font.family: "monospace"; font.bold: true }
+                    Item { Layout.fillWidth: true }
+                    Text { text: root.connectionStatus + (root.pingMs >= 0 ? "  " + root.pingMs.toFixed(0) + " ms" : ""); color: root.connectionStatus === "online" ? "#a6e3a1" : "#f38ba8"; font.family: "monospace" }
+                }
+                Text {
+                    Layout.fillWidth: true
+                    text: "GPU " + (root.gpuTemperature >= 0 ? root.gpuTemperature.toFixed(0) + "°C" : "--") + "  " + (root.gpuUsage >= 0 ? root.gpuUsage + "%" : "--") + "  " + (root.gpuPowerWatts >= 0 ? root.gpuPowerWatts.toFixed(1) + "W" : "--") + "    CPU " + (root.cpuTemperature >= 0 ? root.cpuTemperature.toFixed(0) + "°C" : "--") + "    NVMe " + (root.nvmeTemperature >= 0 ? root.nvmeTemperature.toFixed(0) + "°C" : "--") + "    FAN " + (root.fanRpm >= 0 ? root.fanRpm.toFixed(0) + " RPM" : "--")
+                    color: "#cdd6f4"; font.family: "monospace"; elide: Text.ElideRight
+                }
+                Text { text: "VRAM " + (root.vramUsedGiB >= 0 ? root.vramUsedGiB.toFixed(1) + " / " + root.vramTotalGiB.toFixed(1) + " GiB" : "--") + "    kernel " + root.kernelLabel; color: "#a7b3c2"; font.family: "monospace"; elide: Text.ElideRight }
             }
         }
 
@@ -164,6 +190,7 @@ Rectangle {
                     Layout.fillWidth: true
                     Text { text: "PROGRAMS"; color: "#f38ba8"; font.family: "monospace"; font.bold: true }
                     Item { Layout.fillWidth: true }
+                    Controls.TextField { placeholderText: "filter"; text: root.processFilter; onTextChanged: root.processFilter = text; Layout.preferredWidth: 90; Layout.preferredHeight: 24 }
                     Text { text: "PID          COMMAND             CPU      MEM"; color: "#a7b3c2"; font.family: "monospace"; font.pixelSize: dashboard.fontSize(10) }
                 }
                 Column {
@@ -171,8 +198,15 @@ Rectangle {
                     Repeater {
                         model: root.processes
                         delegate: RowLayout {
+                            visible: root.matchesProcess(modelData.name)
                             width: parent.width
                             height: 16
+                            Controls.Menu {
+                                id: processMenu
+                                Controls.MenuItem { text: "Open System Monitor"; onTriggered: root.openSystemMonitor() }
+                                Controls.MenuItem { text: "Terminate process"; onTriggered: root.terminateProcess(modelData.pid) }
+                            }
+                            MouseArea { anchors.fill: parent; acceptedButtons: Qt.RightButton; onClicked: processMenu.popup() }
                             Text { text: modelData.pid; color: "#a7b3c2"; font.family: "monospace"; width: 55 }
                             Text { text: modelData.name; color: "#cdd6f4"; font.family: "monospace"; Layout.fillWidth: true; elide: Text.ElideRight }
                             Text { text: modelData.cpu + "%"; color: "#89b4fa"; font.family: "monospace"; width: 55; horizontalAlignment: Text.AlignRight }

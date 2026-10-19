@@ -21,6 +21,10 @@ Kirigami.FormLayout {
     property alias cfg_panelOpacity: panelOpacity.value
     property alias cfg_fontScale: fontScale.value
     property alias cfg_panelSpacing: panelSpacing.value
+    property alias cfg_profile: profile.currentIndex
+    property alias cfg_colorScheme: colorScheme.currentIndex
+    property alias cfg_showHardware: showHardware.checked
+    property alias cfg_showDisks: showDisks.checked
 
     Controls.SpinBox {
         id: updateInterval
@@ -51,6 +55,8 @@ Kirigami.FormLayout {
     Controls.CheckBox { id: showNetwork; text: i18n("Network"); Kirigami.FormData.label: "" }
     Controls.CheckBox { id: showDisk; text: i18n("Disk and load"); Kirigami.FormData.label: "" }
     Controls.CheckBox { id: showPrograms; text: i18n("Top programs"); Kirigami.FormData.label: "" }
+    Controls.CheckBox { id: showHardware; text: i18n("GPU, temperatures and fans"); Kirigami.FormData.label: "" }
+    Controls.CheckBox { id: showDisks; text: i18n("Additional disks"); Kirigami.FormData.label: "" }
 
     Controls.ComboBox {
         id: layoutMode
@@ -62,6 +68,18 @@ Kirigami.FormLayout {
         id: chartStyle
         Kirigami.FormData.label: i18n("Graph style:")
         model: [i18n("Lines"), i18n("Bars"), i18n("Blocks / steps")]
+    }
+
+    Controls.ComboBox {
+        id: profile
+        Kirigami.FormData.label: i18n("Profile:")
+        model: [i18n("Custom"), i18n("Minimal"), i18n("Hardware")]
+    }
+
+    Controls.ComboBox {
+        id: colorScheme
+        Kirigami.FormData.label: i18n("Color scheme:")
+        model: [i18n("KDE / blue"), i18n("btop / green"), i18n("Amber")]
     }
 
     Controls.ComboBox {

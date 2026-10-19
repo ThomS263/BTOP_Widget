@@ -23,5 +23,9 @@
     <entry name="panelOpacity" type="Int"><default>19</default></entry>
     <entry name="fontScale" type="Int"><default>100</default></entry>
     <entry name="panelSpacing" type="Int"><default>8</default></entry>
+    <entry name="profile" type="Int"><default>0</default></entry>
+    <entry name="colorScheme" type="Int"><default>0</default></entry>
+    <entry name="showHardware" type="Bool"><default>true</default></entry>
+    <entry name="showDisks" type="Bool"><default>true</default></entry>
   </group>
 </kcfg>
