@@ -1,13 +1,9 @@
 import QtQuick
 import QtQuick.Layouts
-import org.kde.kirigami as Kirigami
 
 Rectangle {
     id: dashboard
     color: "transparent"
-    radius: 5
-    border.color: "#80506a7d"
-    border.width: 1
 
     Layout.minimumWidth: 540
     Layout.preferredWidth: 560
