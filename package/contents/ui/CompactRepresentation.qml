@@ -18,17 +18,18 @@ Rectangle {
         RowLayout {
             Layout.fillWidth: true
             Item { Layout.fillWidth: true }
-            Text { visible: root.batteryLevel >= 0; text: "BAT " + root.batteryLevel + "%  " + root.batteryPowerWatts.toFixed(1) + "W  " + root.batteryVoltage.toFixed(1) + "V"; color: root.batteryLevel < 20 ? "#f38ba8" : "#a6e3a1"; font.family: "monospace"; font.bold: true }
+            Text { visible: root.showBattery && root.batteryLevel >= 0; text: "BAT " + root.batteryLevel + "%  " + root.batteryPowerWatts.toFixed(1) + "W  " + root.batteryVoltage.toFixed(1) + "V"; color: root.batteryLevel < 20 ? "#f38ba8" : "#a6e3a1"; font.family: "monospace"; font.bold: true }
         }
 
         GridLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 224
-            columns: 2
+            columns: root.layoutMode === 1 ? 1 : 2
             rowSpacing: 8
             columnSpacing: 8
 
             Rectangle {
+                visible: root.showCpu
                 Layout.fillWidth: true
                 Layout.preferredHeight: 108
                 color: "#30111820"
@@ -43,12 +44,22 @@ Rectangle {
                         Item { Layout.fillWidth: true }
                         Text { text: "usage"; color: "#a7b3c2"; font.family: "monospace" }
                     }
+                    LineChart {
+                        visible: root.chartStyle === 0
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        download: root.cpuHistory
+                        downloadColor: "#89b4fa"
+                    }
                     Row {
+                        visible: root.chartStyle !== 0
                         Layout.fillWidth: true; Layout.fillHeight: true; spacing: 2
                         Repeater {
                             model: root.cpuHistory
                             delegate: Rectangle {
-                                width: 10; height: Math.max(3, 48 * modelData / 100); anchors.bottom: parent.bottom
+                                width: root.chartStyle === 2 ? 6 : 10
+                                height: Math.max(3, 48 * modelData / 100)
+                                anchors.bottom: parent.bottom
                                 color: modelData > 85 ? "#f38ba8" : "#89b4fa"
                             }
                         }
@@ -57,6 +68,7 @@ Rectangle {
             }
 
             Rectangle {
+                visible: root.showMemory
                 Layout.fillWidth: true
                 Layout.preferredHeight: 108
                 color: "#30111820"
@@ -80,6 +92,8 @@ Rectangle {
             }
 
             Rectangle {
+                visible: root.showNetwork
+                Layout.columnSpan: root.layoutMode === 2 ? 2 : 1
                 Layout.fillWidth: true; Layout.preferredHeight: 108
                 color: "#30111820"; border.color: "#70506a7d"; border.width: 1
                 ColumnLayout {
@@ -90,7 +104,7 @@ Rectangle {
                         Item { Layout.fillWidth: true }
                         Text { text: "RX / TX"; color: "#a7b3c2"; font.family: "monospace" }
                     }
-                    LineChart { Layout.fillWidth: true; Layout.fillHeight: true; download: root.rxHistory; upload: root.txHistory }
+                    LineChart { Layout.fillWidth: true; Layout.fillHeight: true; download: root.rxHistory; upload: root.txHistory; style: root.chartStyle }
                     RowLayout {
                         Layout.fillWidth: true
                         Text { text: "↓ " + root.formatRate(root.rxRate); color: "#89dceb"; font.family: "monospace" }
@@ -101,6 +115,7 @@ Rectangle {
             }
 
             Rectangle {
+                visible: root.showDisk
                 Layout.fillWidth: true; Layout.preferredHeight: 108
                 color: "#30111820"; border.color: "#70506a7d"; border.width: 1
                 ColumnLayout {
@@ -123,6 +138,7 @@ Rectangle {
         }
 
         Rectangle {
+            visible: root.showPrograms
             Layout.fillWidth: true
             Layout.preferredHeight: 112
             color: "#30111820"

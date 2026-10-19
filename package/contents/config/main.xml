@@ -7,5 +7,13 @@
     <entry name="updateInterval" type="Int">
       <default>1000</default>
     </entry>
+    <entry name="showBattery" type="Bool"><default>true</default></entry>
+    <entry name="showCpu" type="Bool"><default>true</default></entry>
+    <entry name="showMemory" type="Bool"><default>true</default></entry>
+    <entry name="showNetwork" type="Bool"><default>true</default></entry>
+    <entry name="showDisk" type="Bool"><default>true</default></entry>
+    <entry name="showPrograms" type="Bool"><default>true</default></entry>
+    <entry name="layoutMode" type="Int"><default>0</default></entry>
+    <entry name="chartStyle" type="Int"><default>0</default></entry>
   </group>
 </kcfg>

@@ -8,13 +8,13 @@
             }
         ],
         "Category": "System Information",
-        "Description": "Persistent btop-style live system monitor dashboard",
+    "Description": "A transparent btop-style live system monitor with configurable panels and graph styles",
         "Icon": "utilities-system-monitor",
         "Id": "thoms263.btop-monitor",
         "License": "GPL-3.0-or-later",
         "Name": "btop Monitor",
-        "Version": "1.0.0",
-        "Website": "https://github.com/aristocratos/btop"
+        "Version": "1.1.0",
+        "Website": "https://github.com/ThomS263/BTOP_Widget"
     },
     "X-Plasma-API-Minimum-Version": "6.0"
 }

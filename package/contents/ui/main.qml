@@ -33,6 +33,14 @@ PlasmoidItem {
     property var rxHistory: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     property var txHistory: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     property var processes: []
+    readonly property bool showBattery: Plasmoid.configuration.showBattery
+    readonly property bool showCpu: Plasmoid.configuration.showCpu
+    readonly property bool showMemory: Plasmoid.configuration.showMemory
+    readonly property bool showNetwork: Plasmoid.configuration.showNetwork
+    readonly property bool showDisk: Plasmoid.configuration.showDisk
+    readonly property bool showPrograms: Plasmoid.configuration.showPrograms
+    readonly property int layoutMode: Plasmoid.configuration.layoutMode
+    readonly property int chartStyle: Plasmoid.configuration.chartStyle
 
     Plasmoid.status: PlasmaCore.Types.ActiveStatus
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
