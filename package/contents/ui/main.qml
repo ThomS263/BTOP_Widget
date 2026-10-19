@@ -10,6 +10,7 @@ PlasmoidItem {
     property real memoryUsedGiB: 0
     property real memoryTotalGiB: 0
     property real loadAverage: 0
+    property real uptimeSeconds: 0
     property real rxRate: 0
     property real txRate: 0
     property real previousRx: 0
@@ -18,6 +19,7 @@ PlasmoidItem {
     property string cpuLabel: "--"
     property string memoryLabel: "--"
     property string loadLabel: "--"
+    property string uptimeLabel: "--"
     property var previousCpu: null
     property var cpuHistory: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -28,7 +30,7 @@ PlasmoidItem {
 
     function parseStats(output) {
         const lines = output.trim().split("\n")
-        if (lines.length < 4) return
+        if (lines.length < 5) return
 
         const cpu = lines[0].trim().split(";").map(Number)
         const idle = cpu[3] + (cpu[4] || 0)
@@ -60,19 +62,29 @@ PlasmoidItem {
         previousTx = network[1] || 0
         previousNetworkTime = now
         loadAverage = Number(lines[3].trim()) || 0
+        uptimeSeconds = Number(lines[4].trim()) || 0
         cpuLabel = Math.round(cpuUsage) + "%"
         memoryLabel = Math.round(memoryUsage) + "%"
         loadLabel = loadAverage.toFixed(2)
+        uptimeLabel = formatUptime(uptimeSeconds)
     }
 
     function refresh() {
-        stats.run("awk '/^cpu / { printf \"%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\\n\", $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12 } /^MemTotal:/ { total=$2 } /^MemAvailable:/ { available=$2 } /^[[:space:]]*[[:alnum:]_.-]+:/ && NF >= 10 { iface=$1; gsub(\":\", \"\", iface); if (iface != \"lo\") { rx += $2; tx += $10 } } END { printf \"MemTotal %s;MemAvailable %s\\n%s;%s\\n\", total, available, rx, tx }' /proc/stat /proc/meminfo /proc/net/dev; cat /proc/loadavg | cut -d' ' -f1")
+        stats.run("awk '/^cpu / { printf \"%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\\n\", $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12 } /^MemTotal:/ { total=$2 } /^MemAvailable:/ { available=$2 } /^[[:space:]]*[[:alnum:]_.-]+:/ && NF >= 10 { iface=$1; gsub(\":\", \"\", iface); if (iface != \"lo\") { rx += $2; tx += $10 } } END { printf \"MemTotal %s;MemAvailable %s\\n%s;%s\\n\", total, available, rx, tx }' /proc/stat /proc/meminfo /proc/net/dev; cat /proc/loadavg | cut -d' ' -f1; cat /proc/uptime | cut -d' ' -f1")
     }
 
     function formatRate(bytesPerSecond) {
         if (bytesPerSecond < 1024) return Math.round(bytesPerSecond) + " B/s"
         if (bytesPerSecond < 1048576) return (bytesPerSecond / 1024).toFixed(1) + " KiB/s"
         return (bytesPerSecond / 1048576).toFixed(1) + " MiB/s"
+    }
+
+    function formatUptime(seconds) {
+        const days = Math.floor(seconds / 86400)
+        const hours = Math.floor((seconds % 86400) / 3600)
+        const minutes = Math.floor((seconds % 3600) / 60)
+        if (days > 0) return days + "d " + hours + "h"
+        return hours + "h " + minutes + "m"
     }
 
     CommandRunner {
