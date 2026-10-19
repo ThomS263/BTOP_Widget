@@ -1,0 +1,20 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "",
+                "Name": "thoms263"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Persistent btop-style live system monitor dashboard",
+        "Icon": "utilities-system-monitor",
+        "Id": "thoms263.btop-monitor",
+        "License": "GPL-3.0-or-later",
+        "Name": "btop Monitor",
+        "Version": "1.0.0",
+        "Website": "https://github.com/aristocratos/btop"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
