@@ -29,6 +29,7 @@ Rectangle {
 
         GridLayout {
             Layout.fillWidth: true
+            Layout.alignment: Qt.AlignTop
             Layout.minimumHeight: root.layoutMode === 1 ? 416 : 212
             Layout.preferredHeight: root.layoutMode === 1 ? 416 : 212
             columns: root.layoutMode === 1 ? 1 : 2
@@ -44,6 +45,7 @@ Rectangle {
                 color: dashboard.panelColor
                 border.color: dashboard.panelBorderColor
                 border.width: 1
+                clip: true
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
                 Text { text: "CPU"; color: dashboard.accentColor; font.family: "monospace"; font.bold: true }
@@ -86,6 +88,7 @@ Rectangle {
                 color: dashboard.panelColor
                 border.color: dashboard.panelBorderColor
                 border.width: 1
+                clip: true
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
                     Text { text: "MEMORY"; color: "#a6e3a1"; font.family: "monospace"; font.bold: true }
@@ -109,7 +112,7 @@ Rectangle {
                 Layout.column: root.panelColumn("network")
                 Layout.columnSpan: root.layoutMode === 2 ? 2 : 1
                 Layout.fillWidth: true; Layout.preferredHeight: 98
-                color: dashboard.panelColor; border.color: dashboard.panelBorderColor; border.width: 1
+                color: dashboard.panelColor; border.color: dashboard.panelBorderColor; border.width: 1; clip: true
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
                     RowLayout {
@@ -133,7 +136,7 @@ Rectangle {
                 Layout.row: root.panelRow("disk")
                 Layout.column: root.panelColumn("disk")
                 Layout.fillWidth: true; Layout.preferredHeight: 98
-                color: dashboard.panelColor; border.color: dashboard.panelBorderColor; border.width: 1
+                color: dashboard.panelColor; border.color: dashboard.panelBorderColor; border.width: 1; clip: true
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
                     Text { text: "DISK • LOAD"; color: "#f9e2af"; font.family: "monospace"; font.bold: true }
@@ -156,11 +159,13 @@ Rectangle {
         Rectangle {
             visible: root.showHardware
             Layout.fillWidth: true
+            Layout.alignment: Qt.AlignTop
             Layout.minimumHeight: 78
             Layout.preferredHeight: 78
             color: dashboard.panelColor
             border.color: dashboard.panelBorderColor
             border.width: 1
+            clip: true
             ColumnLayout {
                 anchors.fill: parent; anchors.margins: 10; spacing: 4
                 RowLayout {
@@ -181,11 +186,13 @@ Rectangle {
         Rectangle {
             visible: root.showPrograms
             Layout.fillWidth: true
+            Layout.alignment: Qt.AlignTop
             Layout.minimumHeight: 122
             Layout.preferredHeight: 122
             color: dashboard.panelColor
             border.color: dashboard.panelBorderColor
             border.width: 1
+            clip: true
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 10

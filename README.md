@@ -18,6 +18,14 @@ The widget is a passive dashboard rather than a launcher or button. It reads loc
 
 The configuration dialog controls panel visibility, panel layout/order, update interval, graph style and history length, network interface, process count/sorting, panel opacity, font scale, spacing, profiles, and color schemes. Hardware sensors, GPU/VRAM, temperatures, fans, connection status, multiple interfaces, and mounted filesystems are detected when available.
 
+## Visual UI matrix
+
+Run `./tools/visual-ui-matrix.sh` from a Plasma session to exercise the
+dashboard layouts, graph styles, color schemes, profiles, panel visibility,
+ordering, zoom, history, and dense settings. It restarts Plasma for each
+case, stores full-screen samples in `screenshots/`, and restores the original
+applet configuration when it finishes.
+
 ## KDE Store package
 
 The `btop-plasma-widget-v1.3.0.plasmoid` archive is generated from the `package/` directory and can be uploaded to the KDE Store under **Plasma Widgets**.
