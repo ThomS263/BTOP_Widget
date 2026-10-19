@@ -4,6 +4,10 @@ import QtQuick.Layouts
 Rectangle {
     id: dashboard
     color: "transparent"
+    property color panelColor: Qt.rgba(0.07, 0.094, 0.125, root.panelOpacity / 100)
+    property color panelBorderColor: Qt.rgba(0.31, 0.42, 0.49, Math.min(0.45, root.panelOpacity / 160))
+
+    function fontSize(base) { return Math.round(base * root.fontScale / 100) }
 
     Layout.minimumWidth: 540
     Layout.preferredWidth: 560
@@ -18,22 +22,24 @@ Rectangle {
         RowLayout {
             Layout.fillWidth: true
             Item { Layout.fillWidth: true }
-            Text { visible: root.showBattery && root.batteryLevel >= 0; text: "BAT " + root.batteryLevel + "%  " + root.batteryPowerWatts.toFixed(1) + "W  " + root.batteryVoltage.toFixed(1) + "V"; color: root.batteryLevel < 20 ? "#f38ba8" : "#a6e3a1"; font.family: "monospace"; font.bold: true }
+            Text { visible: root.showBattery && root.batteryLevel >= 0; text: "BAT " + root.batteryLevel + "%  " + root.batteryPowerWatts.toFixed(1) + "W  " + root.batteryVoltage.toFixed(1) + "V  " + root.batteryStatus; color: root.batteryLevel < 20 ? "#f38ba8" : "#a6e3a1"; font.family: "monospace"; font.pixelSize: dashboard.fontSize(13); font.bold: true }
         }
 
         GridLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 224
             columns: root.layoutMode === 1 ? 1 : 2
-            rowSpacing: 8
-            columnSpacing: 8
+            rowSpacing: root.panelSpacing
+            columnSpacing: root.panelSpacing
 
             Rectangle {
                 visible: root.showCpu
+                Layout.row: root.panelRow("cpu")
+                Layout.column: root.panelColumn("cpu")
                 Layout.fillWidth: true
                 Layout.preferredHeight: 108
-                color: "#30111820"
-                border.color: "#70506a7d"
+                color: dashboard.panelColor
+                border.color: dashboard.panelBorderColor
                 border.width: 1
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
@@ -69,10 +75,12 @@ Rectangle {
 
             Rectangle {
                 visible: root.showMemory
+                Layout.row: root.panelRow("memory")
+                Layout.column: root.panelColumn("memory")
                 Layout.fillWidth: true
                 Layout.preferredHeight: 108
-                color: "#30111820"
-                border.color: "#70506a7d"
+                color: dashboard.panelColor
+                border.color: dashboard.panelBorderColor
                 border.width: 1
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
@@ -93,16 +101,18 @@ Rectangle {
 
             Rectangle {
                 visible: root.showNetwork
+                Layout.row: root.panelRow("network")
+                Layout.column: root.panelColumn("network")
                 Layout.columnSpan: root.layoutMode === 2 ? 2 : 1
                 Layout.fillWidth: true; Layout.preferredHeight: 108
-                color: "#30111820"; border.color: "#70506a7d"; border.width: 1
+                color: dashboard.panelColor; border.color: dashboard.panelBorderColor; border.width: 1
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
                     RowLayout {
                         Layout.fillWidth: true
                         Text { text: "NETIO"; color: "#cba6f7"; font.family: "monospace"; font.bold: true }
                         Item { Layout.fillWidth: true }
-                        Text { text: "RX / TX"; color: "#a7b3c2"; font.family: "monospace" }
+                        Text { text: root.networkLabel + (root.networkLinkMbps > 0 ? "  " + root.networkLinkMbps.toFixed(0) + " Mb/s" : "") ; color: "#a7b3c2"; font.family: "monospace"; elide: Text.ElideRight }
                     }
                     LineChart { Layout.fillWidth: true; Layout.fillHeight: true; download: root.rxHistory; upload: root.txHistory; style: root.chartStyle }
                     RowLayout {
@@ -116,8 +126,10 @@ Rectangle {
 
             Rectangle {
                 visible: root.showDisk
+                Layout.row: root.panelRow("disk")
+                Layout.column: root.panelColumn("disk")
                 Layout.fillWidth: true; Layout.preferredHeight: 108
-                color: "#30111820"; border.color: "#70506a7d"; border.width: 1
+                color: dashboard.panelColor; border.color: dashboard.panelBorderColor; border.width: 1
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
                     Text { text: "DISK • LOAD"; color: "#f9e2af"; font.family: "monospace"; font.bold: true }
@@ -141,8 +153,8 @@ Rectangle {
             visible: root.showPrograms
             Layout.fillWidth: true
             Layout.preferredHeight: 112
-            color: "#30111820"
-            border.color: "#70506a7d"
+            color: dashboard.panelColor
+            border.color: dashboard.panelBorderColor
             border.width: 1
             ColumnLayout {
                 anchors.fill: parent
@@ -152,7 +164,7 @@ Rectangle {
                     Layout.fillWidth: true
                     Text { text: "PROGRAMS"; color: "#f38ba8"; font.family: "monospace"; font.bold: true }
                     Item { Layout.fillWidth: true }
-                    Text { text: "PID          COMMAND             CPU      MEM"; color: "#a7b3c2"; font.family: "monospace"; font.pixelSize: 10 }
+                    Text { text: "PID          COMMAND             CPU      MEM"; color: "#a7b3c2"; font.family: "monospace"; font.pixelSize: dashboard.fontSize(10) }
                 }
                 Column {
                     Layout.fillWidth: true

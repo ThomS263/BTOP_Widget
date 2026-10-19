@@ -14,6 +14,10 @@ Add **btop Monitor** from the Plasma widget chooser. Right-click the widget and 
 
 The widget is a passive dashboard rather than a launcher or button. It reads local `/proc` data and uses standard system commands for the process list. No background service is required.
 
+## Configuration
+
+The configuration dialog controls panel visibility, panel layout/order, update interval, graph style and history length, network interface, process count/sorting, panel opacity, font scale, and spacing.
+
 ## KDE Store package
 
-The `btop-plasma-widget-v1.1.0.plasmoid` archive is generated from the `package/` directory and can be uploaded to the KDE Store under **Plasma Widgets**.
+The `btop-plasma-widget-v1.2.0.plasmoid` archive is generated from the `package/` directory and can be uploaded to the KDE Store under **Plasma Widgets**.

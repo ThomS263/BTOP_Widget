@@ -1,5 +1,45 @@
 #!/bin/sh
 
+interface=""
+process_count=5
+process_sort="cpu"
+include_processes=1
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --interface) interface="$2"; shift 2 ;;
+        --count) process_count="$2"; shift 2 ;;
+        --sort) process_sort="$2"; shift 2 ;;
+        --no-process) include_processes=0; shift ;;
+        *) shift ;;
+    esac
+done
+
+case "$process_sort" in
+    memory) process_sort_key="%mem" ;;
+    name) process_sort_key="comm" ;;
+    *) process_sort_key="%cpu" ;;
+esac
+
+network_line="$(awk -v wanted="$interface" '
+    BEGIN { rx = 0; tx = 0; found = 0; label = (wanted == "" ? "all" : wanted) }
+    /^[[:space:]]*[[:alnum:]_.-]+:/ {
+        iface = $1
+        gsub(":", "", iface)
+        if (wanted != "" && iface != wanted) next
+        if (wanted == "" && iface == "lo") next
+        rx += $2
+        tx += $10
+        found = 1
+    }
+    END { printf "%s;%s;%s\n", rx, tx, label }
+' /proc/net/dev)"
+
+if [ -n "$interface" ] && [ -r "/sys/class/net/$interface/speed" ]; then
+    link_speed="$(cat "/sys/class/net/$interface/speed" 2>/dev/null || echo 0)"
+else
+    link_speed="0"
+fi
+
 awk '
     /^cpu / {
         printf "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\n", $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12
@@ -8,31 +48,30 @@ awk '
     /^MemAvailable:/ { available = $2 }
     /^SwapTotal:/ { swap_total = $2 }
     /^SwapFree:/ { swap_free = $2 }
-    /^[[:space:]]*[[:alnum:]_.-]+:/ && NF >= 10 {
-        iface = $1
-        gsub(":", "", iface)
-        if (iface != "lo") {
-            rx += $2
-            tx += $10
-        }
-    }
     END {
         printf "MemTotal %s;MemAvailable %s;SwapTotal %s;SwapFree %s\n", total, available, swap_total, swap_free
-        printf "%s;%s\n", rx, tx
     }
 ' /proc/stat /proc/meminfo /proc/net/dev
+
+printf '%s;%s;%s\n' "$network_line" "$link_speed"
 
 awk '{ print $1 ";" $4 }' /proc/loadavg
 awk '{ print $1 }' /proc/uptime
 df -P -k / | awk 'NR == 2 { print $3 ";" $2 }'
 
-battery_line="NA;0;0"
+battery_line="NA;0;0;"
 for battery in /sys/class/power_supply/BAT*; do
     if [ -r "$battery/capacity" ]; then
-        battery_line="$(cat "$battery/capacity");$(cat "$battery/power_now" 2>/dev/null || echo 0);$(cat "$battery/voltage_now" 2>/dev/null || echo 0)"
+        battery_line="$(cat "$battery/capacity");$(cat "$battery/power_now" 2>/dev/null || echo 0);$(cat "$battery/voltage_now" 2>/dev/null || echo 0);$(cat "$battery/status" 2>/dev/null || true)"
         break
     fi
 done
 printf '%s\n' "$battery_line"
 
-ps -eo pid=,comm=,%cpu=,%mem= --sort=-%cpu | head -n 5
+if [ "$include_processes" -eq 1 ]; then
+    case "$process_sort" in
+        name) ps -eo pid=,comm=,%cpu=,%mem= --sort=comm | head -n "$process_count" ;;
+        memory) ps -eo pid=,comm=,%cpu=,%mem= --sort=-%mem | head -n "$process_count" ;;
+        *) ps -eo pid=,comm=,%cpu=,%mem= --sort=-%cpu | head -n "$process_count" ;;
+    esac
+fi
