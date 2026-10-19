@@ -193,20 +193,27 @@ Rectangle {
                     Item { Layout.fillWidth: true }
                     Controls.TextField { placeholderText: "filter"; text: root.processFilter; onTextChanged: root.processFilter = text; Layout.preferredWidth: 72; Layout.preferredHeight: 22 }
                 }
-                Text {
+                Column {
                     Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    text: root.processSummary()
-                    color: "#cdd6f4"
-                    font.family: "monospace"
-                    font.pixelSize: dashboard.fontSize(10)
-                    lineHeight: 16
-                    maximumLineCount: 5
-                    wrapMode: Text.NoWrap
-                    MouseArea {
-                        anchors.fill: parent
-                        acceptedButtons: Qt.RightButton
-                        onClicked: root.openSystemMonitor()
+                    width: parent.width
+                    height: 64
+                    Repeater {
+                        model: root.processes
+                        delegate: Text {
+                            visible: root.matchesProcess(modelData.name)
+                            width: parent.width
+                            height: 14
+                            text: modelData.pid + "  " + modelData.name + "  " + modelData.cpu + "%  " + modelData.memory + "%"
+                            color: "#cdd6f4"
+                            font.family: "monospace"
+                            font.pixelSize: dashboard.fontSize(10)
+                            elide: Text.ElideRight
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.RightButton
+                                onClicked: root.openSystemMonitor()
+                            }
+                        }
                     }
                 }
             }
