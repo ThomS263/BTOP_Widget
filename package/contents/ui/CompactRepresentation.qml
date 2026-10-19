@@ -201,7 +201,8 @@ Rectangle {
                     font.family: "monospace"
                     font.pixelSize: dashboard.fontSize(10)
                     lineHeight: 16
-                    elide: Text.ElideRight
+                    maximumLineCount: 5
+                    wrapMode: Text.NoWrap
                     MouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.RightButton
