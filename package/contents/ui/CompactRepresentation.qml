@@ -12,8 +12,8 @@ Rectangle {
 
     Layout.minimumWidth: 430
     Layout.preferredWidth: 460
-    Layout.minimumHeight: 215
-    Layout.preferredHeight: 225
+    Layout.minimumHeight: 285
+    Layout.preferredHeight: 295
 
     ColumnLayout {
         anchors.fill: parent
@@ -77,6 +77,7 @@ Rectangle {
                     Rectangle { width: parent.width * root.memoryUsage / 100; height: parent.height; color: "#a6e3a1" }
                 }
                 Text { text: root.memoryUsedGiB.toFixed(1) + " / " + root.memoryTotalGiB.toFixed(1) + " GiB"; color: "#7f8c9c"; font.family: "monospace" }
+                Text { text: "swap " + Math.round(root.swapUsage) + "%"; color: "#cba6f7"; font.family: "monospace" }
             }
         }
 
@@ -84,10 +85,26 @@ Rectangle {
 
         RowLayout {
             Layout.fillWidth: true
-            Text { text: "[ NET ]"; color: "#cba6f7"; font.family: "monospace"; font.bold: true }
-            Text { text: "↓ " + root.formatRate(root.rxRate); color: "#89dceb"; font.family: "monospace"; Layout.fillWidth: true }
-            Text { text: "↑ " + root.formatRate(root.txRate); color: "#f5c2e7"; font.family: "monospace" }
-            Text { text: "[ LOAD " + root.loadLabel + " ]"; color: "#f9e2af"; font.family: "monospace" }
+            ColumnLayout {
+                Layout.fillWidth: true
+                Text { text: "[ NETWORK ]"; color: "#cba6f7"; font.family: "monospace"; font.bold: true }
+                Row {
+                    Layout.fillWidth: true
+                    height: 30
+                    spacing: 1
+                    Repeater {
+                        model: root.rxHistory
+                        delegate: Rectangle { width: 9; height: Math.max(3, Math.min(28, 8 + 22 * modelData / Math.max(1, root.rxRate, 1024))); anchors.bottom: parent.bottom; color: "#89dceb" }
+                    }
+                }
+                Text { text: "↓ " + root.formatRate(root.rxRate) + "   ↑ " + root.formatRate(root.txRate); color: "#cdd6f4"; font.family: "monospace" }
+            }
+            ColumnLayout {
+                Layout.fillWidth: true
+                Text { text: "[ DISK / LOAD ]"; color: "#f9e2af"; font.family: "monospace"; font.bold: true }
+                Text { text: "disk " + Math.round(root.diskUsage) + "%  " + root.diskUsedGiB.toFixed(0) + "/" + root.diskTotalGiB.toFixed(0) + " GiB"; color: "#cdd6f4"; font.family: "monospace" }
+                Text { text: "load " + root.loadLabel + "  proc " + root.processLabel; color: "#f9e2af"; font.family: "monospace" }
+            }
         }
 
         Text {
