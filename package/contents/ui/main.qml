@@ -64,6 +64,7 @@ PlasmoidItem {
     readonly property string selectedInterface: Plasmoid.configuration.networkInterface || ""
     readonly property int processCount: Plasmoid.configuration.processCount
     readonly property int processSort: Plasmoid.configuration.processSort
+    readonly property int fanSpeedTarget: Plasmoid.configuration.fanSpeedTarget
     readonly property int panelOpacity: Plasmoid.configuration.panelOpacity
     readonly property int fontScale: Plasmoid.configuration.fontScale
     readonly property int panelSpacing: Plasmoid.configuration.panelSpacing

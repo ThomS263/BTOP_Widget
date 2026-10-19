@@ -176,7 +176,7 @@ Rectangle {
                 }
                 Text {
                     Layout.fillWidth: true
-                    text: "GPU " + (root.gpuTemperature >= 0 ? root.gpuTemperature.toFixed(0) + "°C" : "--") + "  " + (root.gpuUsage >= 0 ? root.gpuUsage + "%" : "--") + "  " + (root.gpuPowerWatts >= 0 ? root.gpuPowerWatts.toFixed(1) + "W" : "--") + "    CPU " + (root.cpuTemperature >= 0 ? root.cpuTemperature.toFixed(0) + "°C" : "--") + "    NVMe " + (root.nvmeTemperature >= 0 ? root.nvmeTemperature.toFixed(0) + "°C" : "--") + "    FAN " + (root.fanRpm >= 0 ? root.fanRpm.toFixed(0) + " RPM" : "--")
+                    text: "GPU " + (root.gpuTemperature >= 0 ? root.gpuTemperature.toFixed(0) + "°C" : "--") + "  " + (root.gpuUsage >= 0 ? root.gpuUsage + "%" : "--") + "  " + (root.gpuPowerWatts >= 0 ? root.gpuPowerWatts.toFixed(1) + "W" : "--") + "    CPU " + (root.cpuTemperature >= 0 ? root.cpuTemperature.toFixed(0) + "°C" : "--") + "    NVMe " + (root.nvmeTemperature >= 0 ? root.nvmeTemperature.toFixed(0) + "°C" : "--") + "    FAN " + (root.fanRpm >= 0 ? root.fanRpm.toFixed(0) + " RPM" : "--") + (root.fanSpeedTarget > 0 ? "  T" + root.fanSpeedTarget + "%" : "  auto")
                     color: "#cdd6f4"; font.family: "monospace"; elide: Text.ElideRight
                 }
                 Text { text: "VRAM " + (root.vramUsedGiB >= 0 ? root.vramUsedGiB.toFixed(1) + " / " + root.vramTotalGiB.toFixed(1) + " GiB" : "--") + "    kernel " + root.kernelLabel; color: "#a7b3c2"; font.family: "monospace"; elide: Text.ElideRight }

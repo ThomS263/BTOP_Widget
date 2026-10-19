@@ -18,6 +18,10 @@ The widget is a passive dashboard rather than a launcher or button. It reads loc
 
 The configuration dialog controls panel visibility, panel layout/order, update interval, graph style and history length, network interface, process count/sorting, panel opacity, font scale, spacing, profiles, and color schemes. Hardware sensors, GPU/VRAM, temperatures, fans, connection status, multiple interfaces, and mounted filesystems are detected when available.
 
+The `experimental/fan-speed-slider` branch additionally exposes a 0–100%
+fan target slider. It is monitoring-only on systems without a writable PWM
+interface; this branch never writes unknown hardware-control files.
+
 ## Visual UI matrix
 
 Run `./tools/visual-ui-matrix.sh` from a Plasma session to exercise the

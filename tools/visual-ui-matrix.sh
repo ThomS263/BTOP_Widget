@@ -108,6 +108,7 @@ run_case 15-no-hardware showHardware false
 run_case 16-no-battery showBattery false
 run_case 17-core-only showNetwork false showDisk false showPrograms false showHardware false showDisks false
 run_case 18-dense-font fontScale 130 panelSpacing 2 panelOpacity 5 processCount 10 processSort 1
+run_case 19-fan-target fanSpeedTarget 70
 
 printf '\nScreenshots written to %s\n' "$SCREENSHOT_DIR"
 printf 'Plasma log: %s\n' "$PLASMA_LOG"
