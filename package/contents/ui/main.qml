@@ -88,8 +88,8 @@ PlasmoidItem {
         diskUsage = diskTotalGiB > 0 ? diskUsedGiB / diskTotalGiB * 100 : 0
         const battery = lines[6].trim().split(";")
         batteryLevel = battery[0] === "NA" ? -1 : Number(battery[0])
-        batteryPowerWatts = (Number(battery[2]) || 0) / 1000000
-        batteryVoltage = (Number(battery[3]) || 0) / 1000000
+        batteryPowerWatts = (Number(battery[1]) || 0) / 1000000
+        batteryVoltage = (Number(battery[2]) || 0) / 1000000
         const processRows = []
         for (let i = 7; i < lines.length; i++) {
             const fields = lines[i].trim().split(/\s+/)

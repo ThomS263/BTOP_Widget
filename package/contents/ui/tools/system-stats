@@ -26,10 +26,10 @@ awk '{ print $1 ";" $4 }' /proc/loadavg
 awk '{ print $1 }' /proc/uptime
 df -P -k / | awk 'NR == 2 { print $3 ";" $2 }'
 
-battery_line="NA;Unknown;0;0"
+battery_line="NA;0;0"
 for battery in /sys/class/power_supply/BAT*; do
     if [ -r "$battery/capacity" ]; then
-        battery_line="$(cat "$battery/capacity");$(cat "$battery/status");$(cat "$battery/power_now" 2>/dev/null || echo 0);$(cat "$battery/voltage_now" 2>/dev/null || echo 0)"
+        battery_line="$(cat "$battery/capacity");$(cat "$battery/power_now" 2>/dev/null || echo 0);$(cat "$battery/voltage_now" 2>/dev/null || echo 0)"
         break
     fi
 done
