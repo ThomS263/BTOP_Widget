@@ -13,8 +13,8 @@ Rectangle {
 
     Layout.minimumWidth: 380
     Layout.preferredWidth: 460
-    Layout.minimumHeight: 380
-    Layout.preferredHeight: 400
+    Layout.minimumHeight: root.layoutMode === 1 ? 700 : 450
+    Layout.preferredHeight: root.layoutMode === 1 ? 720 : 500
 
     ColumnLayout {
         anchors.fill: parent
@@ -29,7 +29,8 @@ Rectangle {
 
         GridLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: 204
+            Layout.minimumHeight: root.layoutMode === 1 ? 416 : 212
+            Layout.preferredHeight: root.layoutMode === 1 ? 416 : 212
             columns: root.layoutMode === 1 ? 1 : 2
             rowSpacing: root.panelSpacing
             columnSpacing: root.panelSpacing
@@ -155,7 +156,8 @@ Rectangle {
         Rectangle {
             visible: root.showHardware
             Layout.fillWidth: true
-            Layout.preferredHeight: 64
+            Layout.minimumHeight: 78
+            Layout.preferredHeight: 78
             color: dashboard.panelColor
             border.color: dashboard.panelBorderColor
             border.width: 1
@@ -179,7 +181,8 @@ Rectangle {
         Rectangle {
             visible: root.showPrograms
             Layout.fillWidth: true
-            Layout.preferredHeight: 100
+            Layout.minimumHeight: 122
+            Layout.preferredHeight: 122
             color: dashboard.panelColor
             border.color: dashboard.panelBorderColor
             border.width: 1
@@ -196,7 +199,7 @@ Rectangle {
                 Column {
                     Layout.fillWidth: true
                     width: parent.width
-                    height: 64
+                    height: 86
                     Repeater {
                         model: root.processes
                         delegate: Text {
