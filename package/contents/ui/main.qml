@@ -224,6 +224,12 @@ PlasmoidItem {
         return networkInterfaces.map(function(item) { return item.name + ":" + item.state }).join("  ")
     }
 
+    function processSummary() {
+        return processes.filter(function(item) { return matchesProcess(item.name) }).map(function(item) {
+            return item.pid + "  " + item.name + "  " + item.cpu + "%  " + item.memory + "%"
+        }).join("\n")
+    }
+
     function terminateProcess(pid) {
         if (/^[0-9]+$/.test(String(pid))) processAction.run("kill -TERM " + pid)
     }

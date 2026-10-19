@@ -193,26 +193,19 @@ Rectangle {
                     Item { Layout.fillWidth: true }
                     Controls.TextField { placeholderText: "filter"; text: root.processFilter; onTextChanged: root.processFilter = text; Layout.preferredWidth: 72; Layout.preferredHeight: 22 }
                 }
-                Column {
+                Text {
                     Layout.fillWidth: true
-                    width: parent.width
-                    Repeater {
-                        model: root.processes
-                        delegate: RowLayout {
-                            visible: root.matchesProcess(modelData.name)
-                            width: parent.width
-                            height: 16
-                            Controls.Menu {
-                                id: processMenu
-                                Controls.MenuItem { text: "Open System Monitor"; onTriggered: root.openSystemMonitor() }
-                                Controls.MenuItem { text: "Terminate process"; onTriggered: root.terminateProcess(modelData.pid) }
-                            }
-                            MouseArea { anchors.fill: parent; acceptedButtons: Qt.RightButton; onClicked: processMenu.popup() }
-                            Text { text: modelData.pid; color: "#a7b3c2"; font.family: "monospace"; width: 44 }
-                            Text { text: modelData.name; color: "#cdd6f4"; font.family: "monospace"; Layout.fillWidth: true; Layout.minimumWidth: 0; elide: Text.ElideRight }
-                            Text { text: modelData.cpu + "%"; color: "#89b4fa"; font.family: "monospace"; width: 42; horizontalAlignment: Text.AlignRight }
-                            Text { text: modelData.memory + "%"; color: "#a6e3a1"; font.family: "monospace"; width: 42; horizontalAlignment: Text.AlignRight }
-                        }
+                    Layout.fillHeight: true
+                    text: root.processSummary()
+                    color: "#cdd6f4"
+                    font.family: "monospace"
+                    font.pixelSize: dashboard.fontSize(10)
+                    lineHeight: 16
+                    elide: Text.ElideRight
+                    MouseArea {
+                        anchors.fill: parent
+                        acceptedButtons: Qt.RightButton
+                        onClicked: root.openSystemMonitor()
                     }
                 }
             }
