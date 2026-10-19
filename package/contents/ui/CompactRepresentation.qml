@@ -15,12 +15,6 @@ Rectangle {
     Layout.minimumHeight: 400
     Layout.preferredHeight: 410
 
-    function formatRate(bytesPerSecond) {
-        if (bytesPerSecond < 1024) return Math.round(bytesPerSecond) + " B/s"
-        if (bytesPerSecond < 1048576) return (bytesPerSecond / 1024).toFixed(1) + " KiB/s"
-        return (bytesPerSecond / 1048576).toFixed(1) + " MiB/s"
-    }
-
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 14
@@ -31,7 +25,7 @@ Rectangle {
             Text { text: "btop"; color: "#89dceb"; font.family: "monospace"; font.pixelSize: 19; font.bold: true }
             Text { text: " // SYSTEM MONITOR"; color: "#a7b3c2"; font.family: "monospace"; font.pixelSize: 13 }
             Item { Layout.fillWidth: true }
-            Text { visible: root.batteryLevel >= 0; text: "BAT " + root.batteryLevel + "% " + root.batteryStatus.toUpperCase(); color: root.batteryLevel < 20 ? "#f38ba8" : "#a6e3a1"; font.family: "monospace"; font.bold: true }
+            Text { visible: root.batteryLevel >= 0; text: "BAT " + root.batteryLevel + "%  " + root.batteryPowerWatts.toFixed(1) + "W  " + root.batteryVoltage.toFixed(1) + "V"; color: root.batteryLevel < 20 ? "#f38ba8" : "#a6e3a1"; font.family: "monospace"; font.bold: true }
             Item { visible: root.batteryLevel >= 0; width: 8 }
             Text { text: "● LIVE"; color: "#a6e3a1"; font.family: "monospace"; font.bold: true }
         }
@@ -110,9 +104,9 @@ Rectangle {
                     LineChart { Layout.fillWidth: true; Layout.fillHeight: true; download: root.rxHistory; upload: root.txHistory }
                     RowLayout {
                         Layout.fillWidth: true
-                        Text { text: "↓ " + dashboard.formatRate(root.rxRate); color: "#89dceb"; font.family: "monospace" }
+                        Text { text: "↓ " + root.formatRate(root.rxRate); color: "#89dceb"; font.family: "monospace" }
                         Item { Layout.fillWidth: true }
-                        Text { text: "↑ " + dashboard.formatRate(root.txRate); color: "#f5c2e7"; font.family: "monospace" }
+                        Text { text: "↑ " + root.formatRate(root.txRate); color: "#f5c2e7"; font.family: "monospace" }
                     }
                 }
             }

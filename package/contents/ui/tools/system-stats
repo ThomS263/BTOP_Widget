@@ -1,0 +1,38 @@
+#!/bin/sh
+
+awk '
+    /^cpu / {
+        printf "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\n", $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12
+    }
+    /^MemTotal:/ { total = $2 }
+    /^MemAvailable:/ { available = $2 }
+    /^SwapTotal:/ { swap_total = $2 }
+    /^SwapFree:/ { swap_free = $2 }
+    /^[[:space:]]*[[:alnum:]_.-]+:/ && NF >= 10 {
+        iface = $1
+        gsub(":", "", iface)
+        if (iface != "lo") {
+            rx += $2
+            tx += $10
+        }
+    }
+    END {
+        printf "MemTotal %s;MemAvailable %s;SwapTotal %s;SwapFree %s\n", total, available, swap_total, swap_free
+        printf "%s;%s\n", rx, tx
+    }
+' /proc/stat /proc/meminfo /proc/net/dev
+
+awk '{ print $1 ";" $4 }' /proc/loadavg
+awk '{ print $1 }' /proc/uptime
+df -P -k / | awk 'NR == 2 { print $3 ";" $2 }'
+
+battery_line="NA;Unknown;0;0"
+for battery in /sys/class/power_supply/BAT*; do
+    if [ -r "$battery/capacity" ]; then
+        battery_line="$(cat "$battery/capacity");$(cat "$battery/status");$(cat "$battery/power_now" 2>/dev/null || echo 0);$(cat "$battery/voltage_now" 2>/dev/null || echo 0)"
+        break
+    fi
+done
+printf '%s\n' "$battery_line"
+
+ps -eo pid=,comm=,%cpu=,%mem= --sort=-%cpu | head -n 5

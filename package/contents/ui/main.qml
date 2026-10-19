@@ -13,6 +13,8 @@ PlasmoidItem {
     property real diskUsage: 0
     property real diskUsedGiB: 0
     property real diskTotalGiB: 0
+    property real batteryPowerWatts: 0
+    property real batteryVoltage: 0
     property int batteryLevel: -1
     property real loadAverage: 0
     property real uptimeSeconds: 0
@@ -26,7 +28,6 @@ PlasmoidItem {
     property string loadLabel: "--"
     property string uptimeLabel: "--"
     property string processLabel: "--"
-    property string batteryStatus: ""
     property var previousCpu: null
     property var cpuHistory: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     property var rxHistory: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -41,7 +42,7 @@ PlasmoidItem {
 
     function parseStats(output) {
         const lines = output.trim().split("\n")
-        if (lines.length < 5) return
+        if (lines.length < 7) return
 
         const cpu = lines[0].trim().split(";").map(Number)
         const idle = cpu[3] + (cpu[4] || 0)
@@ -87,7 +88,8 @@ PlasmoidItem {
         diskUsage = diskTotalGiB > 0 ? diskUsedGiB / diskTotalGiB * 100 : 0
         const battery = lines[6].trim().split(";")
         batteryLevel = battery[0] === "NA" ? -1 : Number(battery[0])
-        batteryStatus = battery[1] || ""
+        batteryPowerWatts = (Number(battery[2]) || 0) / 1000000
+        batteryVoltage = (Number(battery[3]) || 0) / 1000000
         const processRows = []
         for (let i = 7; i < lines.length; i++) {
             const fields = lines[i].trim().split(/\s+/)
@@ -101,7 +103,7 @@ PlasmoidItem {
     }
 
     function refresh() {
-        stats.run("awk '/^cpu / { printf \"%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\\n\", $2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12 } /^MemTotal:/ { total=$2 } /^MemAvailable:/ { available=$2 } /^[[:space:]]*[[:alnum:]_.-]+:/ && NF >= 10 { iface=$1; gsub(\":\", \"\", iface); if (iface != \"lo\") { rx += $2; tx += $10 } } END { printf \"MemTotal %s;MemAvailable %s;SwapTotal %s;SwapFree %s\\n%s;%s\\n\", total, available, swap_total, swap_free, rx, tx } /^SwapTotal:/ { swap_total=$2 } /^SwapFree:/ { swap_free=$2 }' /proc/stat /proc/meminfo /proc/net/dev; awk '{print $1\";\"$4}' /proc/loadavg; cat /proc/uptime | cut -d' ' -f1; df -P -k / | awk 'NR==2 {print $3\";\"$2}'; battery_line=\"NA;Unknown\"; for bat in /sys/class/power_supply/BAT*; do if [ -r \"$bat/capacity\" ]; then battery_line=\"$(cat \"$bat/capacity\");$(cat \"$bat/status\")\"; break; fi; done; printf \"%s\\n\" \"$battery_line\"; ps -eo pid=,comm=,%cpu=,%mem= --sort=-%cpu | head -n 5")
+        stats.run("sh " + Qt.resolvedUrl("tools/system-stats").toString().substring(7))
     }
 
     function formatRate(bytesPerSecond) {
