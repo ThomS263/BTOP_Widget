@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.plasmoid
 
 Rectangle {
     id: dashboard
@@ -22,12 +21,8 @@ Rectangle {
 
         RowLayout {
             Layout.fillWidth: true
-            Text { text: "btop"; color: "#89dceb"; font.family: "monospace"; font.pixelSize: 19; font.bold: true }
-            Text { text: " // SYSTEM MONITOR"; color: "#a7b3c2"; font.family: "monospace"; font.pixelSize: 13 }
             Item { Layout.fillWidth: true }
             Text { visible: root.batteryLevel >= 0; text: "BAT " + root.batteryLevel + "%  " + root.batteryPowerWatts.toFixed(1) + "W  " + root.batteryVoltage.toFixed(1) + "V"; color: root.batteryLevel < 20 ? "#f38ba8" : "#a6e3a1"; font.family: "monospace"; font.bold: true }
-            Item { visible: root.batteryLevel >= 0; width: 8 }
-            Text { text: "● LIVE"; color: "#a6e3a1"; font.family: "monospace"; font.bold: true }
         }
 
         Rectangle { Layout.fillWidth: true; height: 1; color: "#80506a7d" }
@@ -116,7 +111,7 @@ Rectangle {
                 color: "#30111820"; border.color: "#70506a7d"; border.width: 1
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
-                    Text { text: "DISK / LOAD"; color: "#f9e2af"; font.family: "monospace"; font.bold: true }
+                    Text { text: "DISK • LOAD"; color: "#f9e2af"; font.family: "monospace"; font.bold: true }
                     RowLayout {
                         Layout.fillWidth: true
                         Text { text: "disk"; color: "#cdd6f4"; font.family: "monospace" }
@@ -166,11 +161,5 @@ Rectangle {
             }
         }
 
-        RowLayout {
-            Layout.fillWidth: true
-            Text { text: "uptime " + root.uptimeLabel; color: "#a7b3c2"; font.family: "monospace"; font.pixelSize: 11 }
-            Item { Layout.fillWidth: true }
-            Text { text: "updates every " + Plasmoid.configuration.updateInterval + "ms"; color: "#a7b3c2"; font.family: "monospace"; font.pixelSize: 11 }
-        }
     }
 }
