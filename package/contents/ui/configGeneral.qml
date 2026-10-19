@@ -25,6 +25,7 @@ Kirigami.FormLayout {
     property alias cfg_colorScheme: colorScheme.currentIndex
     property alias cfg_showHardware: showHardware.checked
     property alias cfg_showDisks: showDisks.checked
+    property alias cfg_graphZoom: graphZoom.currentIndex
 
     Controls.SpinBox {
         id: updateInterval
@@ -68,6 +69,12 @@ Kirigami.FormLayout {
         id: chartStyle
         Kirigami.FormData.label: i18n("Graph style:")
         model: [i18n("Lines"), i18n("Bars"), i18n("Blocks / steps")]
+    }
+
+    Controls.ComboBox {
+        id: graphZoom
+        Kirigami.FormData.label: i18n("Graph zoom:")
+        model: [i18n("Fit all values"), i18n("2x"), i18n("4x")]
     }
 
     Controls.ComboBox {

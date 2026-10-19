@@ -7,12 +7,14 @@ Canvas {
     property color downloadColor: "#89dceb"
     property color uploadColor: "#f5c2e7"
     property int style: 0
+    property int zoom: 0
 
     onDownloadChanged: requestPaint()
     onUploadChanged: requestPaint()
     onWidthChanged: requestPaint()
     onHeightChanged: requestPaint()
     onStyleChanged: requestPaint()
+    onZoomChanged: requestPaint()
 
     onPaint: {
         const ctx = getContext("2d")
@@ -26,7 +28,8 @@ Canvas {
             ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke()
         }
 
-        const maxValue = Math.max(1, ...download, ...upload)
+        const zoomFactor = zoom === 1 ? 2 : zoom === 2 ? 4 : 1
+        const maxValue = Math.max(1, ...download, ...upload) / zoomFactor
         drawSeries(ctx, download, downloadColor, maxValue)
         drawSeries(ctx, upload, uploadColor, maxValue)
     }

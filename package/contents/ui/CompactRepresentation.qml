@@ -58,6 +58,7 @@ Rectangle {
                         Layout.fillHeight: true
                         download: root.cpuHistory
                         downloadColor: dashboard.accentColor
+                        zoom: root.graphZoom
                     }
                     Row {
                         visible: root.chartStyle !== 0
@@ -116,7 +117,7 @@ Rectangle {
                         Item { Layout.fillWidth: true }
                         Text { text: root.networkLabel + (root.networkLinkMbps > 0 ? "  " + root.networkLinkMbps.toFixed(0) + " Mb/s" : "") ; color: "#a7b3c2"; font.family: "monospace"; elide: Text.ElideRight }
                     }
-                    LineChart { Layout.fillWidth: true; Layout.fillHeight: true; download: root.rxHistory; upload: root.txHistory; style: root.chartStyle }
+                    LineChart { Layout.fillWidth: true; Layout.fillHeight: true; download: root.rxHistory; upload: root.txHistory; style: root.chartStyle; zoom: root.graphZoom }
                     RowLayout {
                         Layout.fillWidth: true
                         Text { text: "↓ " + root.formatRate(root.rxRate); color: "#89dceb"; font.family: "monospace" }

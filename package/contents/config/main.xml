@@ -27,5 +27,6 @@
     <entry name="colorScheme" type="Int"><default>0</default></entry>
     <entry name="showHardware" type="Bool"><default>true</default></entry>
     <entry name="showDisks" type="Bool"><default>true</default></entry>
+    <entry name="graphZoom" type="Int"><default>0</default></entry>
   </group>
 </kcfg>

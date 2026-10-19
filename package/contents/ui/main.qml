@@ -58,6 +58,7 @@ PlasmoidItem {
     readonly property bool showPrograms: Plasmoid.configuration.showPrograms && profile !== 1
     readonly property int layoutMode: Plasmoid.configuration.layoutMode
     readonly property int chartStyle: Plasmoid.configuration.chartStyle
+    readonly property int graphZoom: Plasmoid.configuration.graphZoom
     readonly property int panelOrder: Plasmoid.configuration.panelOrder
     readonly property int historySize: [20, 40, 80][Math.max(0, Math.min(2, Plasmoid.configuration.historyLength))]
     readonly property string selectedInterface: Plasmoid.configuration.networkInterface || ""
