@@ -2,12 +2,10 @@ import QtQuick
 import QtQuick.Controls as Controls
 import org.kde.kirigami as Kirigami
 
-Controls.ScrollView {
-    id: scrollView
-    clip: true
-    contentWidth: availableWidth
-    contentHeight: formLayout.implicitHeight
-
+Kirigami.FormLayout {
+    id: root
+    implicitWidth: 640
+    implicitHeight: 560
     property alias cfg_historyLength: historyLength.currentIndex
     property alias cfg_networkInterface: networkInterface.text
     property alias cfg_processCount: processCount.value
@@ -15,10 +13,18 @@ Controls.ScrollView {
     property alias cfg_fanSpeedTarget: fanSpeedTarget.value
     property alias cfg_showNetworkDetails: showNetworkDetails.checked
 
-    Kirigami.FormLayout {
-        id: formLayout
-        width: scrollView.availableWidth
-        implicitHeight: childrenRect.height + Kirigami.Units.largeSpacing
+    Controls.ScrollView {
+        id: scrollView
+        Kirigami.FormData.label: ""
+        implicitHeight: root.implicitHeight
+        clip: true
+        contentWidth: availableWidth
+        contentHeight: formLayout.implicitHeight
+
+        Kirigami.FormLayout {
+            id: formLayout
+            width: scrollView.availableWidth
+            implicitHeight: childrenRect.height + Kirigami.Units.largeSpacing
 
         Controls.ComboBox { id: historyLength; Kirigami.FormData.label: i18n("Graph history:"); model: [i18n("20 samples"), i18n("40 samples"), i18n("80 samples")] }
         Controls.TextField { id: networkInterface; Kirigami.FormData.label: i18n("Network interface:"); placeholderText: i18n("Auto / all interfaces"); selectByMouse: true }
@@ -34,7 +40,6 @@ Controls.ScrollView {
             stepSize: 5
             value: 0
             live: true
-            Layout.fillWidth: true
         }
 
         Controls.Label {
@@ -44,7 +49,6 @@ Controls.ScrollView {
                   : i18n("Display hint: %1% (no hardware control is performed)", fanSpeedTarget.value)
             color: Kirigami.Theme.disabledTextColor
             wrapMode: Text.WordWrap
-            Layout.fillWidth: true
         }
 
         Controls.Label {
@@ -52,7 +56,7 @@ Controls.ScrollView {
             text: i18n("Empty interface combines active links. Fan target is a read-only hint unless hardware control is supported.")
             color: Kirigami.Theme.disabledTextColor
             wrapMode: Text.WordWrap
-            Layout.fillWidth: true
+        }
         }
     }
 }

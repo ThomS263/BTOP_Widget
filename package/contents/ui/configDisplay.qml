@@ -2,12 +2,10 @@ import QtQuick
 import QtQuick.Controls as Controls
 import org.kde.kirigami as Kirigami
 
-Controls.ScrollView {
-    id: scrollView
-    clip: true
-    contentWidth: availableWidth
-    contentHeight: formLayout.implicitHeight
-
+Kirigami.FormLayout {
+    id: root
+    implicitWidth: 640
+    implicitHeight: 560
     property alias cfg_layoutMode: layoutMode.currentIndex
     property alias cfg_panelOrder: panelOrder.currentIndex
     property alias cfg_chartStyle: chartStyle.currentIndex
@@ -17,10 +15,18 @@ Controls.ScrollView {
     property alias cfg_fontScale: fontScale.value
     property alias cfg_panelSpacing: panelSpacing.value
 
-    Kirigami.FormLayout {
-        id: formLayout
-        width: scrollView.availableWidth
-        implicitHeight: childrenRect.height + Kirigami.Units.largeSpacing
+    Controls.ScrollView {
+        id: scrollView
+        Kirigami.FormData.label: ""
+        implicitHeight: root.implicitHeight
+        clip: true
+        contentWidth: availableWidth
+        contentHeight: formLayout.implicitHeight
+
+        Kirigami.FormLayout {
+            id: formLayout
+            width: scrollView.availableWidth
+            implicitHeight: childrenRect.height + Kirigami.Units.largeSpacing
 
         Controls.ComboBox { id: layoutMode; Kirigami.FormData.label: i18n("Panel layout:"); model: [i18n("Shell grid (2 x 2)"), i18n("Single column"), i18n("Wide network panel")] }
         Controls.ComboBox { id: panelOrder; Kirigami.FormData.label: i18n("Panel order:"); model: [i18n("CPU, memory, network, disk"), i18n("Network first"), i18n("Memory first"), i18n("Disk first")] }
@@ -31,5 +37,6 @@ Controls.ScrollView {
         Controls.SpinBox { id: panelOpacity; Kirigami.FormData.label: i18n("Panel opacity:"); from: 5; to: 70; editable: true; textFromValue: function(value) { return i18n("%1%", value); } }
         Controls.SpinBox { id: fontScale; Kirigami.FormData.label: i18n("Font scale:"); from: 80; to: 130; stepSize: 5; editable: true; textFromValue: function(value) { return i18n("%1%", value); } }
         Controls.SpinBox { id: panelSpacing; Kirigami.FormData.label: i18n("Panel spacing:"); from: 2; to: 20; editable: true; textFromValue: function(value) { return i18n("%1 px", value); } }
+        }
     }
 }

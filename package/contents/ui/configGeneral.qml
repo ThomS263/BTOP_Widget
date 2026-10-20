@@ -2,12 +2,10 @@ import QtQuick
 import QtQuick.Controls as Controls
 import org.kde.kirigami as Kirigami
 
-Controls.ScrollView {
-    id: scrollView
-    clip: true
-    contentWidth: availableWidth
-    contentHeight: formLayout.implicitHeight
-
+Kirigami.FormLayout {
+    id: root
+    implicitWidth: 640
+    implicitHeight: 560
     property alias cfg_updateInterval: updateInterval.value
     property alias cfg_profile: profile.currentIndex
     property alias cfg_showBattery: showBattery.checked
@@ -21,10 +19,18 @@ Controls.ScrollView {
     property alias cfg_privacyMode: privacyMode.checked
     property alias cfg_temperatureWarning: temperatureWarning.value
 
-    Kirigami.FormLayout {
-        id: formLayout
-        width: scrollView.availableWidth
-        implicitHeight: childrenRect.height + Kirigami.Units.largeSpacing
+    Controls.ScrollView {
+        id: scrollView
+        Kirigami.FormData.label: ""
+        implicitHeight: root.implicitHeight
+        clip: true
+        contentWidth: availableWidth
+        contentHeight: formLayout.implicitHeight
+
+        Kirigami.FormLayout {
+            id: formLayout
+            width: scrollView.availableWidth
+            implicitHeight: childrenRect.height + Kirigami.Units.largeSpacing
 
         Controls.SpinBox {
             id: updateInterval
@@ -44,7 +50,6 @@ Controls.ScrollView {
             text: i18n("The dashboard stays visible and updates continuously.")
             color: Kirigami.Theme.disabledTextColor
             wrapMode: Text.WordWrap
-            Layout.fillWidth: true
         }
 
         Controls.ComboBox {
@@ -63,5 +68,6 @@ Controls.ScrollView {
         Controls.CheckBox { id: showDisks; Kirigami.FormData.label: ""; text: i18n("Additional disks") }
         Controls.SpinBox { id: temperatureWarning; Kirigami.FormData.label: i18n("Temperature warning:"); from: 60; to: 110; stepSize: 5; editable: true; textFromValue: function(value) { return i18n("%1 °C", value); } }
         Controls.CheckBox { id: privacyMode; Kirigami.FormData.label: i18n("Privacy:"); text: i18n("Hide interface names and IP addresses") }
+        }
     }
 }
