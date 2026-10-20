@@ -14,7 +14,7 @@ Kirigami.FormLayout {
 
     Controls.ComboBox { id: layoutMode; Kirigami.FormData.label: i18n("Panel layout:"); model: [i18n("Shell grid (2 x 2)"), i18n("Single column"), i18n("Wide network panel")] }
     Controls.ComboBox { id: panelOrder; Kirigami.FormData.label: i18n("Panel order:"); model: [i18n("CPU, memory, network, disk"), i18n("Network first"), i18n("Memory first"), i18n("Disk first")] }
-    Controls.ComboBox { id: chartStyle; Kirigami.FormData.label: i18n("Graph style:"); model: [i18n("Lines"), i18n("Bars"), i18n("Blocks / steps")] }
+    Controls.ComboBox { id: chartStyle; Kirigami.FormData.label: i18n("Graph style:"); model: [i18n("Lines"), i18n("Bars"), i18n("Blocks / steps"), i18n("Dots")] }
     Controls.ComboBox { id: graphZoom; Kirigami.FormData.label: i18n("Graph zoom:"); model: [i18n("Fit all values"), i18n("2x"), i18n("4x")] }
     Controls.ComboBox { id: colorScheme; Kirigami.FormData.label: i18n("Color scheme:"); model: [i18n("KDE / blue"), i18n("btop / green"), i18n("Amber")] }
 

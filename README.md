@@ -20,7 +20,7 @@ The project is licensed under the Apache License 2.0. See [LICENSE](LICENSE).
 
 ## Configuration
 
-The configuration dialog controls panel visibility, panel layout/order, update interval, graph style and history length, network interface, process count/sorting, panel opacity, font scale, spacing, profiles, and color schemes. Hardware sensors, GPU/VRAM, temperatures, fans, connection status, multiple interfaces, and mounted filesystems are detected when available.
+The configuration dialog controls panel visibility, panel layout/order, update interval, graph style and history length, network interface/details, process count/sorting, panel opacity, font scale, spacing, profiles, privacy mode, temperature warning level, and color schemes. Hardware sensors, GPU/VRAM, temperatures, fans, connection status, multiple interfaces, IP addresses, wireless signal, and mounted filesystems are detected when available.
 
 The widget exposes a 0–100% fan target hint. It is monitoring-only on systems
 without a supported writable PWM interface; this project never writes unknown
@@ -37,7 +37,7 @@ applet configuration when it finishes.
 
 ## KDE Store package
 
-The `btop-plasma-widget-v1.4.0.plasmoid` archive is generated from the
+The `btop-plasma-widget-v1.5.0.plasmoid` archive is generated from the
 `package/` directory and can be uploaded to the KDE Store under **Plasma 6
 Monitoring**. Build it with:
 

@@ -117,7 +117,7 @@ Rectangle {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
                     RowLayout {
                         Layout.fillWidth: true
-                        Text { text: "NETIO"; color: "#cba6f7"; font.family: "monospace"; font.bold: true }
+                    Text { text: "NETIO"; color: "#cba6f7"; font.family: "monospace"; font.bold: true }
                         Item { Layout.fillWidth: true }
                         Text { text: root.networkLabel + (root.networkLinkMbps > 0 ? "  " + root.networkLinkMbps.toFixed(0) + " Mb/s" : "") ; color: "#a7b3c2"; font.family: "monospace"; elide: Text.ElideRight }
                     }
@@ -128,7 +128,7 @@ Rectangle {
                         Item { Layout.fillWidth: true }
                         Text { text: "↑ " + root.formatRate(root.txRate); color: "#f5c2e7"; font.family: "monospace" }
                     }
-                    Text { Layout.fillWidth: true; text: root.interfaceSummary(); color: "#a7b3c2"; font.family: "monospace"; font.pixelSize: dashboard.fontSize(10); elide: Text.ElideRight }
+                    Text { visible: root.showNetworkDetails; Layout.fillWidth: true; text: root.interfaceSummary(); color: "#a7b3c2"; font.family: "monospace"; font.pixelSize: dashboard.fontSize(10); elide: Text.ElideRight }
                 }
             }
 
@@ -171,7 +171,7 @@ Rectangle {
                 anchors.fill: parent; anchors.margins: 10; spacing: 4
                 RowLayout {
                     Layout.fillWidth: true
-                    Text { text: "HARDWARE"; color: dashboard.accentColor; font.family: "monospace"; font.bold: true }
+                    Text { text: "HARDWARE" + (root.temperatureWarningVisible() ? "  ⚠" : ""); color: root.temperatureWarningVisible() ? "#f38ba8" : dashboard.accentColor; font.family: "monospace"; font.bold: true }
                     Item { Layout.fillWidth: true }
                     Text { text: root.connectionStatus + (root.pingMs >= 0 ? "  " + root.pingMs.toFixed(0) + " ms" : ""); color: root.connectionStatus === "online" ? "#a6e3a1" : "#f38ba8"; font.family: "monospace" }
                 }

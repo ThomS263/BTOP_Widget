@@ -49,6 +49,7 @@ ColumnLayout {
     }
 
     Controls.Label {
+        visible: root.showNetworkDetails
         text: i18n("%1  •  %2  •  %3", root.interfaceSummary(), root.fanLabel, root.platformProfile)
         color: Kirigami.Theme.disabledTextColor
         font.family: "monospace"

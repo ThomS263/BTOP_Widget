@@ -13,7 +13,7 @@
         "Id": "thoms263.btop-monitor",
         "License": "Apache-2.0",
         "Name": "btop Monitor",
-        "Version": "1.4.0",
+        "Version": "1.5.0",
         "Website": "https://github.com/ThomS263/BTOP_Widget"
     },
     "X-Plasma-API-Minimum-Version": "6.0"

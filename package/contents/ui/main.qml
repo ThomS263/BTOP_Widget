@@ -65,7 +65,7 @@ PlasmoidItem {
     readonly property bool showMemory: Plasmoid.configuration.showMemory
     readonly property bool showNetwork: Plasmoid.configuration.showNetwork
     readonly property bool showDisk: Plasmoid.configuration.showDisk
-    readonly property bool showPrograms: Plasmoid.configuration.showPrograms && profile !== 1
+    readonly property bool showPrograms: Plasmoid.configuration.showPrograms && profile !== 1 && profile !== 4
     readonly property int layoutMode: Plasmoid.configuration.layoutMode
     readonly property int chartStyle: Plasmoid.configuration.chartStyle
     readonly property int graphZoom: Plasmoid.configuration.graphZoom
@@ -80,8 +80,11 @@ PlasmoidItem {
     readonly property int panelSpacing: Plasmoid.configuration.panelSpacing
     readonly property int profile: Plasmoid.configuration.profile
     readonly property int colorScheme: Plasmoid.configuration.colorScheme
-    readonly property bool showHardware: Plasmoid.configuration.showHardware && profile !== 1
+    readonly property bool showHardware: Plasmoid.configuration.showHardware && profile !== 1 && profile !== 4
     readonly property bool showDisks: Plasmoid.configuration.showDisks || profile === 2
+    readonly property bool showNetworkDetails: Plasmoid.configuration.showNetworkDetails
+    readonly property bool privacyMode: Plasmoid.configuration.privacyMode
+    readonly property int temperatureWarning: Plasmoid.configuration.temperatureWarning
 
     Plasmoid.status: PlasmaCore.Types.ActiveStatus
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
@@ -180,7 +183,7 @@ PlasmoidItem {
                 fanRpm2 = Number(parts[4]) || -1
                 platformProfile = parts[5] || "unknown"
             } else if (parts[0] === "NET" && parts.length >= 6) {
-                parsedNetworks.push({ name: parts[1], rx: Number(parts[2]) || 0, tx: Number(parts[3]) || 0, speed: Number(parts[4]) || 0, state: parts[5] })
+                parsedNetworks.push({ name: parts[1], rx: Number(parts[2]) || 0, tx: Number(parts[3]) || 0, speed: Number(parts[4]) || 0, state: parts[5], address: parts[6] || "", signal: Number(parts[7]) || -1 })
             } else if (parts[0] === "DISK" && parts.length >= 5) {
                 parsedDisks.push({ mount: parts[1], used: Number(parts[2]) / 1048576, total: Number(parts[3]) / 1048576, percent: Number(String(parts[4]).replace("%", "")) || 0 })
             } else if (parts[0] === "KERNEL") {
@@ -234,7 +237,21 @@ PlasmoidItem {
     }
 
     function interfaceSummary() {
-        return networkInterfaces.map(function(item) { return item.name + ":" + item.state }).join("  ")
+        return networkInterfaces.map(function(item) {
+            const name = privacyMode ? "iface" : item.name
+            const address = privacyMode || !showNetworkDetails ? "" : (item.address ? " " + item.address : "")
+            const signal = !privacyMode && showNetworkDetails && item.signal >= 0 ? " " + item.signal + "%" : ""
+            return name + ":" + item.state + address + signal
+        }).join("  ")
+    }
+
+    function temperatureColor(value) {
+        if (value < 0) return "#a7b3c2"
+        return value >= temperatureWarning ? "#f38ba8" : value >= temperatureWarning - 10 ? "#f9e2af" : "#cdd6f4"
+    }
+
+    function temperatureWarningVisible() {
+        return gpuTemperature >= temperatureWarning || cpuTemperature >= temperatureWarning || nvmeTemperature >= temperatureWarning
     }
 
     function processSummary() {

@@ -8,11 +8,13 @@ Kirigami.FormLayout {
     property alias cfg_processCount: processCount.value
     property alias cfg_processSort: processSort.currentIndex
     property alias cfg_fanSpeedTarget: fanSpeedTarget.value
+    property alias cfg_showNetworkDetails: showNetworkDetails.checked
 
     Controls.ComboBox { id: historyLength; Kirigami.FormData.label: i18n("Graph history:"); model: [i18n("20 samples"), i18n("40 samples"), i18n("80 samples")] }
     Controls.TextField { id: networkInterface; Kirigami.FormData.label: i18n("Network interface:"); placeholderText: i18n("Auto / all interfaces"); selectByMouse: true }
     Controls.SpinBox { id: processCount; Kirigami.FormData.label: i18n("Processes shown:"); from: 3; to: 10; editable: true }
     Controls.ComboBox { id: processSort; Kirigami.FormData.label: i18n("Sort processes by:"); model: [i18n("CPU"), i18n("Memory"), i18n("Name")] }
+    Controls.CheckBox { id: showNetworkDetails; Kirigami.FormData.label: i18n("Network:"); text: i18n("Show interface state, IP and signal") }
 
     Controls.Slider {
         id: fanSpeedTarget

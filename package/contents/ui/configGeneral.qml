@@ -13,6 +13,8 @@ Kirigami.FormLayout {
     property alias cfg_showPrograms: showPrograms.checked
     property alias cfg_showHardware: showHardware.checked
     property alias cfg_showDisks: showDisks.checked
+    property alias cfg_privacyMode: privacyMode.checked
+    property alias cfg_temperatureWarning: temperatureWarning.value
 
     Controls.SpinBox {
         id: updateInterval
@@ -37,7 +39,7 @@ Kirigami.FormLayout {
     Controls.ComboBox {
         id: profile
         Kirigami.FormData.label: i18n("Profile:")
-        model: [i18n("Custom"), i18n("Minimal"), i18n("Hardware")]
+        model: [i18n("Custom"), i18n("Minimal"), i18n("Hardware"), i18n("Performance"), i18n("Battery saver")]
     }
 
     Controls.CheckBox { id: showBattery; Kirigami.FormData.label: i18n("Show:"); text: i18n("Battery, watts and voltage") }
@@ -48,4 +50,6 @@ Kirigami.FormLayout {
     Controls.CheckBox { id: showPrograms; Kirigami.FormData.label: ""; text: i18n("Top programs") }
     Controls.CheckBox { id: showHardware; Kirigami.FormData.label: ""; text: i18n("GPU, temperatures and fans") }
     Controls.CheckBox { id: showDisks; Kirigami.FormData.label: ""; text: i18n("Additional disks") }
+    Controls.SpinBox { id: temperatureWarning; Kirigami.FormData.label: i18n("Temperature warning:"); from: 60; to: 110; stepSize: 5; editable: true; textFromValue: function(value) { return i18n("%1 °C", value); } }
+    Controls.CheckBox { id: privacyMode; Kirigami.FormData.label: i18n("Privacy:"); text: i18n("Hide interface names and IP addresses") }
 }

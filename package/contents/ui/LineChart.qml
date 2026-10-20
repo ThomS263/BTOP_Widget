@@ -45,6 +45,17 @@ Canvas {
             }
             return
         }
+        if (style === 3) {
+            ctx.fillStyle = color
+            for (let i = 0; i < values.length; i++) {
+                const x = i * width / (values.length - 1)
+                const y = height - (values[i] / maxValue) * (height - 4) - 2
+                ctx.beginPath()
+                ctx.arc(x, y, 2.5, 0, Math.PI * 2)
+                ctx.fill()
+            }
+            return
+        }
         ctx.beginPath()
         for (let i = 0; i < values.length; i++) {
             const x = i * width / (values.length - 1)
