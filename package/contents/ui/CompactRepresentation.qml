@@ -13,8 +13,8 @@ Rectangle {
 
     Layout.minimumWidth: 380
     Layout.preferredWidth: 460
-    Layout.minimumHeight: root.layoutMode === 1 ? 700 : 450
-    Layout.preferredHeight: root.layoutMode === 1 ? 720 : 500
+    Layout.minimumHeight: root.layoutMode === 1 ? 700 : 450 + Math.max(0, root.processCount - 5) * dashboard.fontSize(14)
+    Layout.preferredHeight: root.layoutMode === 1 ? 720 : 500 + Math.max(0, root.processCount - 5) * dashboard.fontSize(14)
 
     ColumnLayout {
         anchors.fill: parent
@@ -136,11 +136,11 @@ Rectangle {
                 visible: root.showDisk
                 Layout.row: root.panelRow("disk")
                 Layout.column: root.panelColumn("disk")
-                Layout.fillWidth: true; Layout.preferredHeight: 98
+                Layout.fillWidth: true; Layout.preferredHeight: 122
                 color: dashboard.panelColor; border.color: dashboard.panelBorderColor; border.width: 1; clip: true
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 5
-                    Text { text: "DISK • LOAD"; color: "#f9e2af"; font.family: "monospace"; font.bold: true }
+                    Text { text: "STORAGE • LOAD"; color: "#f9e2af"; font.family: "monospace"; font.bold: true; elide: Text.ElideRight; Layout.fillWidth: true }
                     RowLayout {
                         Layout.fillWidth: true
                         Text { text: "disk"; color: "#cdd6f4"; font.family: "monospace" }
@@ -151,8 +151,8 @@ Rectangle {
                         Layout.fillWidth: true; height: 9; color: "#60405466"
                         Rectangle { width: parent.width * root.diskUsage / 100; height: parent.height; color: "#f9e2af" }
                     }
-                    Text { Layout.fillWidth: true; text: root.diskUsedGiB.toFixed(0) + " / " + root.diskTotalGiB.toFixed(0) + " GiB"; color: "#cdd6f4"; font.family: "monospace"; elide: Text.ElideRight }
-                    Text { text: "load " + root.loadLabel + "   proc " + root.processLabel; color: "#f9e2af"; font.family: "monospace" }
+                    Text { Layout.fillWidth: true; text: root.diskUsedGiB.toFixed(0) + " / " + root.diskTotalGiB.toFixed(0) + " GiB"; color: "#cdd6f4"; font.family: "monospace"; elide: Text.ElideRight; clip: true }
+                    Text { Layout.fillWidth: true; text: "load " + root.loadLabel + "   proc " + root.processLabel; color: "#f9e2af"; font.family: "monospace"; elide: Text.ElideRight; clip: true }
                 }
             }
         }
@@ -189,8 +189,8 @@ Rectangle {
             visible: root.showPrograms
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignTop
-            Layout.minimumHeight: 122
-            Layout.preferredHeight: 122
+            Layout.minimumHeight: Math.max(122, 76 + root.processCount * dashboard.fontSize(14))
+            Layout.preferredHeight: Math.max(122, 76 + root.processCount * dashboard.fontSize(14))
             color: dashboard.panelColor
             border.color: dashboard.panelBorderColor
             border.width: 1

@@ -85,12 +85,18 @@ PlasmoidItem {
     readonly property bool showNetworkDetails: Plasmoid.configuration.showNetworkDetails
     readonly property bool privacyMode: Plasmoid.configuration.privacyMode
     readonly property int temperatureWarning: Plasmoid.configuration.temperatureWarning
+    readonly property int uiVersion: Plasmoid.configuration.uiVersion
 
     Plasmoid.status: PlasmaCore.Types.ActiveStatus
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
     preferredRepresentation: compactRepresentation
-    compactRepresentation: CompactRepresentation {}
+    compactRepresentation: Loader {
+        sourceComponent: root.uiVersion === 1 ? classicRepresentation : currentRepresentation
+    }
     fullRepresentation: FullRepresentation {}
+
+    Component { id: currentRepresentation; CompactRepresentation {} }
+    Component { id: classicRepresentation; WidgetOneRepresentation {} }
 
     function panelRow(panel) {
         if (layoutMode === 2) return panel === "network" ? 0 : panel === "cpu" ? 1 : panel === "memory" ? 2 : 3

@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import QtQuick.Controls as Controls
 import org.kde.kirigami as Kirigami
 
@@ -6,6 +7,7 @@ Kirigami.FormLayout {
     id: root
     implicitWidth: 640
     implicitHeight: 560
+    property string title: ""
     property alias cfg_layoutMode: layoutMode.currentIndex
     property alias cfg_panelOrder: panelOrder.currentIndex
     property alias cfg_chartStyle: chartStyle.currentIndex
@@ -14,10 +16,57 @@ Kirigami.FormLayout {
     property alias cfg_panelOpacity: panelOpacity.value
     property alias cfg_fontScale: fontScale.value
     property alias cfg_panelSpacing: panelSpacing.value
+    property var cfg_updateInterval
+    property var cfg_showBattery
+    property var cfg_showCpu
+    property var cfg_showMemory
+    property var cfg_showNetwork
+    property var cfg_showDisk
+    property var cfg_showPrograms
+    property var cfg_historyLength
+    property var cfg_networkInterface
+    property var cfg_processCount
+    property var cfg_processSort
+    property var cfg_fanSpeedTarget
+    property var cfg_profile
+    property var cfg_showHardware
+    property var cfg_showDisks
+    property var cfg_showNetworkDetails
+    property var cfg_privacyMode
+    property var cfg_temperatureWarning
+    property var cfg_uiVersion
+    property var cfg_updateIntervalDefault
+    property var cfg_showBatteryDefault
+    property var cfg_showCpuDefault
+    property var cfg_showMemoryDefault
+    property var cfg_showNetworkDefault
+    property var cfg_showDiskDefault
+    property var cfg_showProgramsDefault
+    property var cfg_layoutModeDefault
+    property var cfg_chartStyleDefault
+    property var cfg_panelOrderDefault
+    property var cfg_historyLengthDefault
+    property var cfg_networkInterfaceDefault
+    property var cfg_processCountDefault
+    property var cfg_processSortDefault
+    property var cfg_fanSpeedTargetDefault
+    property var cfg_panelOpacityDefault
+    property var cfg_fontScaleDefault
+    property var cfg_panelSpacingDefault
+    property var cfg_profileDefault
+    property var cfg_colorSchemeDefault
+    property var cfg_showHardwareDefault
+    property var cfg_showDisksDefault
+    property var cfg_graphZoomDefault
+    property var cfg_showNetworkDetailsDefault
+    property var cfg_privacyModeDefault
+    property var cfg_temperatureWarningDefault
+    property var cfg_uiVersionDefault
 
     Controls.ScrollView {
         id: scrollView
-        Kirigami.FormData.label: ""
+        Layout.fillWidth: true
+        Layout.fillHeight: true
         implicitHeight: root.implicitHeight
         clip: true
         contentWidth: availableWidth

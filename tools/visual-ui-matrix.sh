@@ -12,6 +12,18 @@ BACKUP_DIR="$(mktemp -d /tmp/btop-widget-ui-check.XXXXXX)"
 BACKUP_FILE="${BACKUP_DIR}/appletsrc"
 PLASMA_LOG="${BACKUP_DIR}/plasmashell.log"
 
+read -r CONTAINMENT_ID APPLET_ID < <(
+    awk -F'[][]' '
+        /^\[Containments\]\[[0-9]+\]\[Applets\]\[[0-9]+\]$/ { containment=$4; applet=$8; next }
+        /^plugin=thoms263\.btop-monitor$/ { print containment, applet; exit }
+    ' "$CONFIG_FILE"
+)
+
+if [[ -z "${CONTAINMENT_ID:-}" || -z "${APPLET_ID:-}" ]]; then
+    echo "Could not find the btop Monitor applet in $CONFIG_FILE" >&2
+    exit 1
+fi
+
 mkdir -p "$SCREENSHOT_DIR"
 cp "$CONFIG_FILE" "$BACKUP_FILE"
 
@@ -27,7 +39,7 @@ trap restore EXIT INT TERM
 
 set_value() {
     kwriteconfig6 --file "$CONFIG_FILE" \
-        --group Containments --group 85 --group Applets --group 125 \
+        --group Containments --group "$CONTAINMENT_ID" --group Applets --group "$APPLET_ID" \
         --group Configuration --group General --key "$1" "$2"
 }
 
@@ -56,6 +68,7 @@ defaults() {
     set_value showNetworkDetails true
     set_value privacyMode false
     set_value temperatureWarning 85
+    set_value uiVersion 0
 }
 
 restart_plasma() {
@@ -121,6 +134,7 @@ run_case 20-dots-chart chartStyle 3
 run_case 21-privacy-mode privacyMode true
 run_case 22-performance-profile profile 3
 run_case 23-battery-profile profile 4
+run_case 24-widget-1-classic uiVersion 1
 
 printf '\nScreenshots written to %s\n' "$SCREENSHOT_DIR"
 printf 'Plasma log: %s\n' "$PLASMA_LOG"
