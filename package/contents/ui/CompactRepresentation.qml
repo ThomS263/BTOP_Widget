@@ -29,8 +29,8 @@ Rectangle {
 
     Layout.minimumWidth: 380
     Layout.preferredWidth: 460
-    Layout.minimumHeight: root.layoutMode === 1 ? 700 : 450 + Math.max(0, root.processCount - 5) * dashboard.fontSize(14)
-    Layout.preferredHeight: root.layoutMode === 1 ? 720 : 500 + Math.max(0, root.processCount - 5) * dashboard.fontSize(14)
+    Layout.minimumHeight: (root.layoutMode === 1 ? 700 : 450 + Math.max(0, root.processCount - 5) * dashboard.fontSize(14)) + (root.showDisks ? 54 + Math.min(root.disks.length, 6) * 17 : 0)
+    Layout.preferredHeight: (root.layoutMode === 1 ? 720 : 500 + Math.max(0, root.processCount - 5) * dashboard.fontSize(14)) + (root.showDisks ? 54 + Math.min(root.disks.length, 6) * 17 : 0)
 
     ColumnLayout {
         anchors.fill: parent
@@ -40,7 +40,7 @@ Rectangle {
         RowLayout {
             Layout.fillWidth: true
             Item { Layout.fillWidth: true }
-            Text { visible: root.showBattery && root.batteryLevel >= 0; text: "BAT " + root.batteryLevel + "%  " + root.batteryPowerWatts.toFixed(1) + "W  " + root.batteryVoltage.toFixed(1) + "V  " + root.batteryStatus; color: root.batteryLevel < 20 ? "#f38ba8" : "#a6e3a1"; font.family: "monospace"; font.pixelSize: dashboard.fontSize(13); font.bold: true }
+            Text { visible: root.showBattery && root.batteryLevel >= 0; text: "BAT " + root.batteryLevel + "%  " + root.batteryPowerWatts.toFixed(1) + "W  " + root.batteryVoltage.toFixed(1) + "V  " + root.batteryStatus + (root.batteryEtaLabel !== "" ? "  ETA " + root.batteryEtaLabel : ""); color: root.batteryLevel < 20 ? "#f38ba8" : "#a6e3a1"; font.family: "monospace"; font.pixelSize: dashboard.fontSize(13); font.bold: true; elide: Text.ElideRight }
         }
 
         GridLayout {
@@ -144,7 +144,7 @@ Rectangle {
                         Item { Layout.fillWidth: true }
                         Text { text: "↑ " + root.formatRate(root.txRate); color: "#f5c2e7"; font.family: "monospace" }
                     }
-                    Text { visible: root.showNetworkDetails; Layout.fillWidth: true; text: root.interfaceSummary(); color: "#a7b3c2"; font.family: "monospace"; font.pixelSize: dashboard.fontSize(10); elide: Text.ElideRight }
+                    Text { visible: root.showNetworkDetails; Layout.fillWidth: true; text: root.networkInterfaces.length > 0 ? root.interfaceSummary() : "no active interfaces"; color: root.networkInterfaces.length > 0 ? "#a7b3c2" : "#f9e2af"; font.family: "monospace"; font.pixelSize: dashboard.fontSize(10); elide: Text.ElideRight }
                 }
             }
 
@@ -174,6 +174,35 @@ Rectangle {
         }
 
         Rectangle {
+            visible: root.showDisks && root.disks.length > 0
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignTop
+            Layout.preferredHeight: Math.max(86, 38 + Math.min(root.disks.length, 6) * 17)
+            color: dashboard.panelColor
+            border.color: dashboard.panelBorderColor
+            border.width: 1
+            clip: true
+            ColumnLayout {
+                anchors.fill: parent; anchors.margins: 10; spacing: 3
+                RowLayout {
+                    Layout.fillWidth: true
+                    Text { text: "FILESYSTEMS"; color: "#cba6f7"; font.family: "monospace"; font.bold: true }
+                    Item { Layout.fillWidth: true }
+                    Text { text: Math.min(root.disks.length, 6) + " mounts"; color: "#a7b3c2"; font.family: "monospace" }
+                }
+                Repeater {
+                    model: root.diskRows()
+                    delegate: RowLayout {
+                        Layout.fillWidth: true
+                        Text { text: modelData.mount; color: "#cdd6f4"; font.family: "monospace"; Layout.preferredWidth: 88; elide: Text.ElideRight }
+                        Rectangle { Layout.fillWidth: true; height: 6; color: "#344052"; Rectangle { width: parent.width * modelData.percent / 100; height: parent.height; color: modelData.percent >= 90 ? "#f38ba8" : "#cba6f7" } }
+                        Text { text: Math.round(modelData.percent) + "%"; color: modelData.percent >= 90 ? "#f38ba8" : "#cdd6f4"; font.family: "monospace"; Layout.preferredWidth: 36; horizontalAlignment: Text.AlignRight }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
             visible: root.showHardware
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignTop
@@ -196,7 +225,7 @@ Rectangle {
                     text: "GPU " + (root.gpuTemperature >= 0 ? root.gpuTemperature.toFixed(0) + "°C" : "--") + "  " + (root.gpuUsage >= 0 ? root.gpuUsage + "%" : "--") + "  " + (root.gpuPowerWatts >= 0 ? root.gpuPowerWatts.toFixed(1) + "W" : "--") + "    CPU " + (root.cpuTemperature >= 0 ? root.cpuTemperature.toFixed(0) + "°C" : "--") + "    NVMe " + (root.nvmeTemperature >= 0 ? root.nvmeTemperature.toFixed(0) + "°C" : "--")
                     color: "#cdd6f4"; font.family: "monospace"; elide: Text.ElideRight
                 }
-                Text { text: root.fanLabel + "  profile " + root.platformProfile + (root.fanSpeedTarget > 0 ? "  T" + root.fanSpeedTarget + "%" : "  auto"); color: "#a7b3c2"; font.family: "monospace"; elide: Text.ElideRight }
+                    Text { text: root.fanLabel + "  profile " + root.platformProfile + (root.fanSpeedTarget > 0 ? "  T" + root.fanSpeedTarget + "%" : "  auto"); color: "#a7b3c2"; font.family: "monospace"; elide: Text.ElideRight }
                 Text { text: "VRAM " + (root.vramUsedGiB >= 0 ? root.vramUsedGiB.toFixed(1) + " / " + root.vramTotalGiB.toFixed(1) + " GiB" : "--") + "    kernel " + root.kernelLabel; color: "#a7b3c2"; font.family: "monospace"; elide: Text.ElideRight }
             }
         }

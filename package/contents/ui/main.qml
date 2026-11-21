@@ -17,6 +17,9 @@ PlasmoidItem {
     property real batteryVoltage: 0
     property int batteryLevel: -1
     property string batteryStatus: ""
+    property real batteryEnergyNowWh: -1
+    property real batteryEnergyFullWh: -1
+    property string batteryEtaLabel: ""
     property real loadAverage: 0
     property real uptimeSeconds: 0
     property real rxRate: 0
@@ -172,6 +175,16 @@ PlasmoidItem {
         batteryPowerWatts = (Number(battery[1]) || 0) / 1000000
         batteryVoltage = (Number(battery[2]) || 0) / 1000000
         batteryStatus = battery[3] || ""
+        batteryEnergyNowWh = (Number(battery[4]) || 0) / 1000000
+        batteryEnergyFullWh = (Number(battery[5]) || 0) / 1000000
+        if (batteryPowerWatts > 0 && batteryEnergyNowWh > 0) {
+            const hours = batteryStatus.toLowerCase().indexOf("discharg") >= 0
+                    ? batteryEnergyNowWh / batteryPowerWatts
+                    : (batteryEnergyFullWh - batteryEnergyNowWh) / batteryPowerWatts
+            batteryEtaLabel = hours >= 0 && isFinite(hours) ? Math.floor(hours) + "h " + Math.floor((hours % 1) * 60) + "m" : ""
+        } else {
+            batteryEtaLabel = ""
+        }
         const parsedNetworks = []
         const parsedDisks = []
         for (let i = 7; i < lines.length; i++) {
@@ -240,6 +253,10 @@ PlasmoidItem {
 
     function diskSummary() {
         return disks.slice(0, 3).map(function(disk) { return disk.mount + " " + Math.round(disk.percent) + "%" }).join("   ")
+    }
+
+    function diskRows() {
+        return disks.slice(0, 6)
     }
 
     function interfaceSummary() {

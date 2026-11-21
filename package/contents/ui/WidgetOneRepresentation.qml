@@ -26,7 +26,7 @@ Rectangle {
             Layout.fillWidth: true
             Text { text: "BTOP"; color: classic.textColor; font.family: "monospace"; font.pixelSize: classic.size(25); font.bold: true }
             Item { Layout.fillWidth: true }
-            Text { text: root.batteryLevel >= 0 ? "BAT " + root.batteryLevel + "%" : "BAT --"; color: root.batteryLevel < 20 ? "#f38ba8" : classic.accentColor; font.family: "monospace"; font.bold: true }
+            Text { text: root.batteryLevel >= 0 ? "BAT " + root.batteryLevel + (root.batteryEtaLabel !== "" ? "%  " + root.batteryEtaLabel : "%") : "BAT --"; color: root.batteryLevel < 20 ? "#f38ba8" : classic.accentColor; font.family: "monospace"; font.bold: true }
         }
 
         Text { text: "classic widget  •  live"; color: classic.mutedColor; font.family: "monospace"; font.pixelSize: classic.size(10) }
@@ -77,7 +77,7 @@ Rectangle {
 
             Rectangle {
                 visible: root.showDisk
-                Layout.columnSpan: 2; Layout.fillWidth: true; Layout.preferredHeight: 116
+                Layout.columnSpan: 2; Layout.fillWidth: true; Layout.preferredHeight: root.showDisks ? 132 : 116
                 color: classic.panelColor; border.color: classic.borderColor; border.width: 1; radius: 4
                 ColumnLayout { anchors.fill: parent; anchors.margins: 10; spacing: 4
                     RowLayout {
@@ -89,6 +89,7 @@ Rectangle {
                     Rectangle { Layout.fillWidth: true; height: 7; color: "#344052"; Rectangle { width: parent.width * root.diskUsage / 100; height: parent.height; color: "#f9e2af" } }
                     Text { Layout.fillWidth: true; text: root.diskUsedGiB.toFixed(0) + " / " + root.diskTotalGiB.toFixed(0) + " GiB"; color: classic.textColor; font.family: "monospace"; elide: Text.ElideRight; clip: true }
                     Text { Layout.fillWidth: true; text: "load " + root.loadLabel + "   proc " + root.processLabel; color: classic.mutedColor; font.family: "monospace"; elide: Text.ElideRight; clip: true }
+                    Text { visible: root.showDisks; Layout.fillWidth: true; text: root.diskSummary(); color: classic.mutedColor; font.family: "monospace"; elide: Text.ElideRight; clip: true }
                 }
             }
         }
