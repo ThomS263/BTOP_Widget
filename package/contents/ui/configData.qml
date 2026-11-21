@@ -63,6 +63,15 @@ Kirigami.FormLayout {
     property var cfg_temperatureWarningDefault
     property var cfg_uiVersionDefault
 
+    function resetPage() {
+        historyLength.currentIndex = 0
+        networkInterface.text = ""
+        processCount.value = 5
+        processSort.currentIndex = 0
+        fanSpeedTarget.value = 0
+        showNetworkDetails.checked = true
+    }
+
     Controls.ScrollView {
         id: scrollView
         Layout.fillWidth: true
@@ -107,6 +116,12 @@ Kirigami.FormLayout {
             text: i18n("Empty interface combines active links. Fan target is a read-only hint unless hardware control is supported.")
             color: Kirigami.Theme.disabledTextColor
             wrapMode: Text.WordWrap
+        }
+
+        Controls.Button {
+            Kirigami.FormData.label: i18n("Defaults:")
+            text: i18n("Restore data defaults")
+            onClicked: root.resetPage()
         }
         }
     }

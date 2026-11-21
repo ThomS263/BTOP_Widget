@@ -63,6 +63,22 @@ Kirigami.FormLayout {
     property var cfg_temperatureWarningDefault
     property var cfg_uiVersionDefault
 
+    function resetPage() {
+        updateInterval.value = 1000
+        profile.currentIndex = 0
+        uiVersion.currentIndex = 0
+        showBattery.checked = true
+        showCpu.checked = true
+        showMemory.checked = true
+        showNetwork.checked = true
+        showDisk.checked = true
+        showPrograms.checked = true
+        showHardware.checked = true
+        showDisks.checked = true
+        privacyMode.checked = false
+        temperatureWarning.value = 85
+    }
+
     Controls.ScrollView {
         id: scrollView
         Layout.fillWidth: true
@@ -101,6 +117,12 @@ Kirigami.FormLayout {
             id: profile
             Kirigami.FormData.label: i18n("Profile:")
             model: [i18n("Custom"), i18n("Minimal"), i18n("Hardware"), i18n("Performance"), i18n("Battery saver")]
+        }
+
+        Controls.Button {
+            Kirigami.FormData.label: i18n("Defaults:")
+            text: i18n("Restore general defaults")
+            onClicked: root.resetPage()
         }
 
         Controls.ComboBox {

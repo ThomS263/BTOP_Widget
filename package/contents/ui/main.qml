@@ -217,7 +217,7 @@ PlasmoidItem {
         const script = Qt.resolvedUrl("tools/system-stats").toString().substring(7)
         const interfaceArg = selectedInterface.replace(/[^A-Za-z0-9_.:-]/g, "")
         const sortArg = processSort === 1 ? "memory" : processSort === 2 ? "name" : "cpu"
-        stats.run("sh '" + script + "' --interface '" + interfaceArg + "' --count " + processCount + " --sort " + sortArg)
+        stats.run("sh '" + script + "' --interface '" + interfaceArg + "' --count " + processCount + " --sort " + sortArg + " --no-process")
     }
 
     function refreshProcesses() {

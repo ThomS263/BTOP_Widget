@@ -100,8 +100,8 @@ printf 'SENSORS;%s;%s;%s;%s;%s\n' "${cpu_temp:-NA}" "${nvme_temp:-NA}" "${fan1_r
 for iface_path in /sys/class/net/*; do
     iface="${iface_path##*/}"
     [ "$iface" = lo ] && continue
-    rx_iface="$(awk -v name="$iface" '$1 ~ name ":" { print $2; exit }' /proc/net/dev)"
-    tx_iface="$(awk -v name="$iface" '$1 ~ name ":" { print $10; exit }' /proc/net/dev)"
+    rx_iface="$(awk -v name="$iface" '$1 == name ":" { print $2; exit }' /proc/net/dev)"
+    tx_iface="$(awk -v name="$iface" '$1 == name ":" { print $10; exit }' /proc/net/dev)"
     speed_iface="$(cat "$iface_path/speed" 2>/dev/null || echo 0)"
     state_iface="$(cat "$iface_path/operstate" 2>/dev/null || echo unknown)"
     address_iface="$(ip -o -4 addr show dev "$iface" 2>/dev/null | awk '{ sub(/\/.*/, "", $4); print $4; exit }')"

@@ -11,6 +11,22 @@ Rectangle {
     function fontSize(base) { return Math.round(base * root.fontScale / 100) }
     property color accentColor: root.colorScheme === 1 ? "#a6e3a1" : root.colorScheme === 2 ? "#f9e2af" : "#89b4fa"
 
+    Controls.Menu {
+        id: processMenu
+        property string selectedPid: ""
+        Controls.MenuItem {
+            text: "Open System Monitor"
+            onTriggered: root.openSystemMonitor()
+        }
+        Controls.MenuItem {
+            text: "Filter by PID"
+            onTriggered: {
+                if (processMenu.selectedPid !== "")
+                    root.processFilter = processMenu.selectedPid
+            }
+        }
+    }
+
     Layout.minimumWidth: 380
     Layout.preferredWidth: 460
     Layout.minimumHeight: root.layoutMode === 1 ? 700 : 450 + Math.max(0, root.processCount - 5) * dashboard.fontSize(14)
@@ -208,7 +224,7 @@ Rectangle {
                 Column {
                     Layout.fillWidth: true
                     width: parent.width
-                    height: 86
+                    height: Math.max(30, root.processCount * (dashboard.fontSize(10) + 4))
                     Repeater {
                         model: root.processes
                         delegate: Text {
@@ -223,7 +239,10 @@ Rectangle {
                             MouseArea {
                                 anchors.fill: parent
                                 acceptedButtons: Qt.RightButton
-                                onClicked: root.openSystemMonitor()
+                                onClicked: {
+                                    processMenu.selectedPid = modelData.pid
+                                    processMenu.popup()
+                                }
                             }
                         }
                     }

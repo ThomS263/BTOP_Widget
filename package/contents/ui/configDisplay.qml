@@ -63,6 +63,17 @@ Kirigami.FormLayout {
     property var cfg_temperatureWarningDefault
     property var cfg_uiVersionDefault
 
+    function resetPage() {
+        layoutMode.currentIndex = 0
+        panelOrder.currentIndex = 0
+        chartStyle.currentIndex = 0
+        graphZoom.currentIndex = 0
+        colorScheme.currentIndex = 0
+        panelOpacity.value = 19
+        fontScale.value = 100
+        panelSpacing.value = 8
+    }
+
     Controls.ScrollView {
         id: scrollView
         Layout.fillWidth: true
@@ -86,6 +97,12 @@ Kirigami.FormLayout {
         Controls.SpinBox { id: panelOpacity; Kirigami.FormData.label: i18n("Panel opacity:"); from: 5; to: 70; editable: true; textFromValue: function(value) { return i18n("%1%", value); } }
         Controls.SpinBox { id: fontScale; Kirigami.FormData.label: i18n("Font scale:"); from: 80; to: 130; stepSize: 5; editable: true; textFromValue: function(value) { return i18n("%1%", value); } }
         Controls.SpinBox { id: panelSpacing; Kirigami.FormData.label: i18n("Panel spacing:"); from: 2; to: 20; editable: true; textFromValue: function(value) { return i18n("%1 px", value); } }
+
+        Controls.Button {
+            Kirigami.FormData.label: i18n("Defaults:")
+            text: i18n("Restore display defaults")
+            onClicked: root.resetPage()
+        }
         }
     }
 }
