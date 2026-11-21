@@ -37,7 +37,7 @@ applet configuration when it finishes.
 
 ## KDE Store package
 
-The `btop-plasma-widget-v1.6.0.plasmoid` archive is generated from the
+The `btop-plasma-widget-v1.6.1.plasmoid` archive is generated from the
 `package/` directory and can be uploaded to the KDE Store under **Plasma 6
 Monitoring**. Build it with:
 
