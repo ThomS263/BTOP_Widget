@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 
@@ -78,6 +79,7 @@ PlasmoidItem {
     readonly property int processCount: Plasmoid.configuration.processCount
     readonly property int processSort: Plasmoid.configuration.processSort
     readonly property int fanSpeedTarget: Plasmoid.configuration.fanSpeedTarget
+    readonly property bool showFanSlider: Plasmoid.configuration.showFanSlider
     readonly property int panelOpacity: Plasmoid.configuration.panelOpacity
     readonly property int fontScale: Plasmoid.configuration.fontScale
     readonly property int panelSpacing: Plasmoid.configuration.panelSpacing
@@ -89,17 +91,38 @@ PlasmoidItem {
     readonly property bool privacyMode: Plasmoid.configuration.privacyMode
     readonly property int temperatureWarning: Plasmoid.configuration.temperatureWarning
     readonly property int uiVersion: Plasmoid.configuration.uiVersion
+    readonly property int representationMinimumWidth: uiVersion === 1 ? 390 : 380
+    readonly property int representationPreferredWidth: uiVersion === 1 ? 470 : 460
+    readonly property int representationMinimumHeight: uiVersion === 1
+            ? 500 + (showFanSlider ? 40 : 0)
+            : (layoutMode === 1 ? 700 : 450 + Math.max(0, processCount - 5) * Math.round(14 * fontScale / 100))
+              + (showDisks ? 54 + Math.min(disks.length, 6) * 17 : 0)
+              + (showFanSlider ? 40 : 0)
+    readonly property int representationPreferredHeight: uiVersion === 1
+            ? 540 + (showFanSlider ? 40 : 0)
+            : (layoutMode === 1 ? 720 : 500 + Math.max(0, processCount - 5) * Math.round(14 * fontScale / 100))
+              + (showDisks ? 54 + Math.min(disks.length, 6) * 17 : 0)
+              + (showFanSlider ? 40 : 0)
+
+    Layout.minimumWidth: representationMinimumWidth
+    Layout.preferredWidth: representationPreferredWidth
+    Layout.minimumHeight: representationMinimumHeight
+    Layout.preferredHeight: representationPreferredHeight
+    implicitWidth: representationPreferredWidth
+    implicitHeight: representationPreferredHeight
 
     Plasmoid.status: PlasmaCore.Types.ActiveStatus
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
     preferredRepresentation: compactRepresentation
-    compactRepresentation: Loader {
-        sourceComponent: root.uiVersion === 1 ? classicRepresentation : currentRepresentation
-    }
+    compactRepresentation: root.uiVersion === 1 ? classicRepresentation : currentRepresentation
     fullRepresentation: FullRepresentation {}
 
     Component { id: currentRepresentation; CompactRepresentation {} }
     Component { id: classicRepresentation; WidgetOneRepresentation {} }
+
+    function setFanTarget(value) {
+        Plasmoid.configuration.fanSpeedTarget = Math.max(0, Math.min(100, Math.round(value / 5) * 5))
+    }
 
     function panelRow(panel) {
         if (layoutMode === 2) return panel === "network" ? 0 : panel === "cpu" ? 1 : panel === "memory" ? 2 : 3

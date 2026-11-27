@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls as Controls
 
 Rectangle {
     id: classic
@@ -10,10 +11,12 @@ Rectangle {
     property color mutedColor: "#9aa8bb"
     property color accentColor: root.colorScheme === 1 ? "#a6e3a1" : root.colorScheme === 2 ? "#f9e2af" : "#89b4fa"
 
-    Layout.minimumWidth: 390
-    Layout.preferredWidth: 470
-    Layout.minimumHeight: 500
-    Layout.preferredHeight: 540
+    Layout.minimumWidth: root.representationMinimumWidth
+    Layout.preferredWidth: root.representationPreferredWidth
+    Layout.minimumHeight: root.representationMinimumHeight
+    Layout.preferredHeight: root.representationPreferredHeight
+    width: Layout.preferredWidth
+    height: Layout.preferredHeight
 
     function size(value) { return Math.round(value * root.fontScale / 100) }
 
@@ -96,11 +99,18 @@ Rectangle {
 
         Rectangle {
             visible: root.showHardware
-            Layout.fillWidth: true; Layout.preferredHeight: 72
+            Layout.fillWidth: true; Layout.preferredHeight: root.showFanSlider ? 106 : 72
             color: classic.panelColor; border.color: classic.borderColor; border.width: 1; radius: 4
             ColumnLayout { anchors.fill: parent; anchors.margins: 10; spacing: 3
                 Text { Layout.fillWidth: true; text: "TEMP/FAN  " + root.fanLabel; color: classic.accentColor; font.family: "monospace"; elide: Text.ElideRight }
                 Text { Layout.fillWidth: true; text: "GPU " + (root.gpuTemperature >= 0 ? root.gpuTemperature.toFixed(0) + "°C" : "--") + "   CPU " + (root.cpuTemperature >= 0 ? root.cpuTemperature.toFixed(0) + "°C" : "--") + "   " + root.platformProfile; color: classic.mutedColor; font.family: "monospace"; elide: Text.ElideRight }
+                RowLayout {
+                    visible: root.showFanSlider
+                    Layout.fillWidth: true
+                    Text { text: "TARGET"; color: classic.accentColor; font.family: "monospace" }
+                    Controls.Slider { Layout.fillWidth: true; from: 0; to: 100; stepSize: 5; value: root.fanSpeedTarget; onMoved: root.setFanTarget(value) }
+                    Text { text: root.fanSpeedTarget === 0 ? "AUTO" : root.fanSpeedTarget + "%"; color: classic.textColor; font.family: "monospace" }
+                }
             }
         }
 

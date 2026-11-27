@@ -13,6 +13,7 @@ Kirigami.FormLayout {
     property alias cfg_processCount: processCount.value
     property alias cfg_processSort: processSort.currentIndex
     property alias cfg_fanSpeedTarget: fanSpeedTarget.value
+    property alias cfg_showFanSlider: showFanSlider.checked
     property alias cfg_showNetworkDetails: showNetworkDetails.checked
     property var cfg_updateInterval
     property var cfg_showBattery
@@ -35,6 +36,7 @@ Kirigami.FormLayout {
     property var cfg_privacyMode
     property var cfg_temperatureWarning
     property var cfg_uiVersion
+    property var cfg_showFanSliderDefault
     property var cfg_updateIntervalDefault
     property var cfg_showBatteryDefault
     property var cfg_showCpuDefault
@@ -69,6 +71,7 @@ Kirigami.FormLayout {
         processCount.value = 5
         processSort.currentIndex = 0
         fanSpeedTarget.value = 0
+        showFanSlider.checked = false
         showNetworkDetails.checked = true
     }
 
@@ -92,9 +95,17 @@ Kirigami.FormLayout {
         Controls.ComboBox { id: processSort; Kirigami.FormData.label: i18n("Sort processes by:"); model: [i18n("CPU"), i18n("Memory"), i18n("Name")] }
         Controls.CheckBox { id: showNetworkDetails; Kirigami.FormData.label: i18n("Network:"); text: i18n("Show interface state, IP and signal") }
 
+        Controls.CheckBox {
+            id: showFanSlider
+            Kirigami.FormData.label: i18n("Fan control:")
+            text: i18n("Show fan target slider in the widget")
+        }
+
         Controls.Slider {
             id: fanSpeedTarget
-            Kirigami.FormData.label: i18n("Fan target hint:")
+            visible: showFanSlider.checked
+            enabled: showFanSlider.checked
+            Kirigami.FormData.label: i18n("Initial fan target:")
             from: 0
             to: 100
             stepSize: 5
@@ -103,6 +114,7 @@ Kirigami.FormLayout {
         }
 
         Controls.Label {
+            visible: showFanSlider.checked
             Kirigami.FormData.label: ""
             text: fanSpeedTarget.value === 0
                   ? i18n("Automatic / monitoring only")
@@ -113,7 +125,7 @@ Kirigami.FormLayout {
 
         Controls.Label {
             Kirigami.FormData.label: ""
-            text: i18n("Empty interface combines active links. Fan target is a read-only hint unless hardware control is supported.")
+            text: i18n("Empty interface combines active links. The fan slider is a safe target display and does not write unknown PWM hardware files.")
             color: Kirigami.Theme.disabledTextColor
             wrapMode: Text.WordWrap
         }

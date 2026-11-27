@@ -28,6 +28,7 @@ Kirigami.FormLayout {
     property var cfg_processCount
     property var cfg_processSort
     property var cfg_fanSpeedTarget
+    property var cfg_showFanSlider
     property var cfg_profile
     property var cfg_showHardware
     property var cfg_showDisks
@@ -50,6 +51,7 @@ Kirigami.FormLayout {
     property var cfg_processCountDefault
     property var cfg_processSortDefault
     property var cfg_fanSpeedTargetDefault
+    property var cfg_showFanSliderDefault
     property var cfg_panelOpacityDefault
     property var cfg_fontScaleDefault
     property var cfg_panelSpacingDefault

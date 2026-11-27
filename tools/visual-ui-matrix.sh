@@ -65,6 +65,7 @@ defaults() {
     set_value showHardware true
     set_value showDisks true
     set_value fanSpeedTarget 0
+    set_value showFanSlider false
     set_value showNetworkDetails true
     set_value privacyMode false
     set_value temperatureWarning 85
@@ -129,7 +130,7 @@ run_case 15-no-hardware showHardware false
 run_case 16-no-battery showBattery false
 run_case 17-core-only showNetwork false showDisk false showPrograms false showHardware false showDisks false
 run_case 18-dense-font fontScale 130 panelSpacing 2 panelOpacity 5 processCount 10 processSort 1
-run_case 19-fan-target fanSpeedTarget 70
+run_case 19-fan-target showFanSlider true fanSpeedTarget 70
 run_case 20-dots-chart chartStyle 3
 run_case 21-privacy-mode privacyMode true
 run_case 22-performance-profile profile 3

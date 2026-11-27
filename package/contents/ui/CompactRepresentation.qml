@@ -27,10 +27,12 @@ Rectangle {
         }
     }
 
-    Layout.minimumWidth: 380
-    Layout.preferredWidth: 460
-    Layout.minimumHeight: (root.layoutMode === 1 ? 700 : 450 + Math.max(0, root.processCount - 5) * dashboard.fontSize(14)) + (root.showDisks ? 54 + Math.min(root.disks.length, 6) * 17 : 0)
-    Layout.preferredHeight: (root.layoutMode === 1 ? 720 : 500 + Math.max(0, root.processCount - 5) * dashboard.fontSize(14)) + (root.showDisks ? 54 + Math.min(root.disks.length, 6) * 17 : 0)
+    Layout.minimumWidth: root.representationMinimumWidth
+    Layout.preferredWidth: root.representationPreferredWidth
+    Layout.minimumHeight: root.representationMinimumHeight
+    Layout.preferredHeight: root.representationPreferredHeight
+    width: Layout.preferredWidth
+    height: Layout.preferredHeight
 
     ColumnLayout {
         anchors.fill: parent
@@ -206,8 +208,8 @@ Rectangle {
             visible: root.showHardware
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignTop
-            Layout.minimumHeight: 96
-            Layout.preferredHeight: 96
+            Layout.minimumHeight: root.showFanSlider ? 130 : 96
+            Layout.preferredHeight: root.showFanSlider ? 130 : 96
             color: dashboard.panelColor
             border.color: dashboard.panelBorderColor
             border.width: 1
@@ -227,6 +229,18 @@ Rectangle {
                 }
                     Text { text: root.fanLabel + "  profile " + root.platformProfile + (root.fanSpeedTarget > 0 ? "  T" + root.fanSpeedTarget + "%" : "  auto"); color: "#a7b3c2"; font.family: "monospace"; elide: Text.ElideRight }
                 Text { text: "VRAM " + (root.vramUsedGiB >= 0 ? root.vramUsedGiB.toFixed(1) + " / " + root.vramTotalGiB.toFixed(1) + " GiB" : "--") + "    kernel " + root.kernelLabel; color: "#a7b3c2"; font.family: "monospace"; elide: Text.ElideRight }
+                RowLayout {
+                    visible: root.showFanSlider
+                    Layout.fillWidth: true
+                    Text { text: "FAN TARGET"; color: dashboard.accentColor; font.family: "monospace"; font.pixelSize: dashboard.fontSize(10) }
+                    Controls.Slider {
+                        Layout.fillWidth: true
+                        from: 0; to: 100; stepSize: 5
+                        value: root.fanSpeedTarget
+                        onMoved: root.setFanTarget(value)
+                    }
+                    Text { text: root.fanSpeedTarget === 0 ? "AUTO" : root.fanSpeedTarget + "%"; color: "#cdd6f4"; font.family: "monospace"; Layout.preferredWidth: 42 }
+                }
             }
         }
 
