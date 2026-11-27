@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 
@@ -93,13 +94,29 @@ PlasmoidItem {
     Plasmoid.status: PlasmaCore.Types.ActiveStatus
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
     preferredRepresentation: compactRepresentation
-    compactRepresentation: Loader {
-        sourceComponent: root.uiVersion === 1 ? classicRepresentation : currentRepresentation
-    }
+    // Bind the Component directly. Wrapping it in a Loader made
+    // compactRepresentationItem a bare Loader with no Layout.* constraints,
+    // so the desktop edit-mode hitbox ignored the dashboard's real size and
+    // the visual panels overflowed outside the resize handles.
+    compactRepresentation: root.uiVersion === 1 ? classicRepresentation : currentRepresentation
     fullRepresentation: FullRepresentation {}
 
     Component { id: currentRepresentation; CompactRepresentation {} }
     Component { id: classicRepresentation; WidgetOneRepresentation {} }
+
+    // Desktop applet preferred/initial size is taken from the PlasmoidItem
+    // (and switchWidth/Height), while minimum size comes from
+    // compactRepresentationItem when preferredRepresentation is compact.
+    Layout.minimumWidth: compactRepresentationItem && compactRepresentationItem.Layout.minimumWidth > 0
+            ? compactRepresentationItem.Layout.minimumWidth : 380
+    Layout.minimumHeight: compactRepresentationItem && compactRepresentationItem.Layout.minimumHeight > 0
+            ? compactRepresentationItem.Layout.minimumHeight : 450
+    Layout.preferredWidth: compactRepresentationItem && compactRepresentationItem.Layout.preferredWidth > 0
+            ? compactRepresentationItem.Layout.preferredWidth : 460
+    Layout.preferredHeight: compactRepresentationItem && compactRepresentationItem.Layout.preferredHeight > 0
+            ? compactRepresentationItem.Layout.preferredHeight : 500
+    switchWidth: Layout.preferredWidth
+    switchHeight: Layout.preferredHeight
 
     function panelRow(panel) {
         if (layoutMode === 2) return panel === "network" ? 0 : panel === "cpu" ? 1 : panel === "memory" ? 2 : 3

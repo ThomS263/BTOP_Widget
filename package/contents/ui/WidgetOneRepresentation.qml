@@ -14,6 +14,9 @@ Rectangle {
     Layout.preferredWidth: 470
     Layout.minimumHeight: 500
     Layout.preferredHeight: 540
+    // Desktop widgets use width/height for the default size (Layout.preferred* is ignored there).
+    width: Layout.preferredWidth
+    height: Layout.preferredHeight
 
     function size(value) { return Math.round(value * root.fontScale / 100) }
 

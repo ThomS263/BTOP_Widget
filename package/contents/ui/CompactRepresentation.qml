@@ -31,6 +31,9 @@ Rectangle {
     Layout.preferredWidth: 460
     Layout.minimumHeight: (root.layoutMode === 1 ? 700 : 450 + Math.max(0, root.processCount - 5) * dashboard.fontSize(14)) + (root.showDisks ? 54 + Math.min(root.disks.length, 6) * 17 : 0)
     Layout.preferredHeight: (root.layoutMode === 1 ? 720 : 500 + Math.max(0, root.processCount - 5) * dashboard.fontSize(14)) + (root.showDisks ? 54 + Math.min(root.disks.length, 6) * 17 : 0)
+    // Desktop widgets use width/height for the default size (Layout.preferred* is ignored there).
+    width: Layout.preferredWidth
+    height: Layout.preferredHeight
 
     ColumnLayout {
         anchors.fill: parent
